@@ -11,9 +11,11 @@
 #include "../submodule/inih/ini.h"
 #include "../submodule/log.c-patched/src/log.h"
 #include "headers/bot.h"
+#include "headers/command_parser.h"
 
-FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(const std::string bot_token) : bot(bot_token)
+FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config) : bot(config->bot_token)
 {
+        this->config = config;
 }
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
@@ -22,15 +24,23 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
         
 }
 
+void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *msg)
+{
+        // log_info("...")
+        this->bot.getApi().sendMessage((*msg)->chat->id, "string: " + (*msg)->text);
+
+        // struct FadhilRiyanto::string_utils::command_parser_result res;
+        // struct FadhilRiyanto::string_utils::command_parser_config parseconf = {
+        //         .command_prefix = 
+        // }
+}
+
 void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
 {
 
         this->bot.getEvents().onAnyMessage([this](TgBot::Message::Ptr message) -> void {
-                log_info("User wrote %s", message->text.c_str());
-                if (StringTools::startsWith(message->text, "/start")) {
-                        return;
-                }
-                this->bot.getApi().sendMessage(message->chat->id, "Your message is: " + message->text);
+                this->bot_handle_message(&message);
+                
         });
         
         try {
@@ -57,7 +67,7 @@ int main()
 
         log_set_quiet(config.logger);
 
-        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(config.bot_token);
+        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config);
         fadhil_riyanto_bot.bot_show_basic_config();
         fadhil_riyanto_bot.bot_eventloop();
 
