@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "headers/inih_parser.h"
+#include "../submodule/log.c-patched/src/log.h"
 
 int parse_config_cb(void* user, const char* section, const char* name,
                                 const char* value)
@@ -22,9 +23,7 @@ int parse_config_cb(void* user, const char* section, const char* name,
                 config->logger = (strcmp(tmpptr, "true") == 0) ? true : false;
                 free(tmpptr);
         } else if (MATCH("TELEGRAM", "command_prefix")) {
-                char* tmpptr = strdup(value);
-                config->command_prefix = tmpptr[0];
-                free(tmpptr);
+                config->command_prefix = strdup(value);
         } else if (MATCH("TELEGRAM", "bot_username")) {
                 config->bot_username = strdup(value);
         } else {
@@ -38,4 +37,14 @@ void ini_free_mem(struct ini_config *config)
 {
         free(config->bot_token);
         free(config->bot_username);
+}
+
+void ini_show_config(struct ini_config *config)
+{
+        log_info("config loaded \"bot_token\" = \"%s\"", config->bot_token);
+        log_info("config loaded \"quiet_logger\" = \"%s\"", config->logger == 1 ? "true" : "false");
+        log_info("config loaded \"command_prefix\" = \"%s\"", config->command_prefix);
+        log_info("config loaded \"bot_username\" = \"%s\"", config->bot_username);
+        
+        
 }
