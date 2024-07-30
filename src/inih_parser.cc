@@ -5,8 +5,6 @@
  *  https://github.com/fadhil-riyanto/telegram-bot
  */
 
-#include "../submodule/inih/ini.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "headers/inih_parser.h"
