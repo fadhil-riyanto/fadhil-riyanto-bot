@@ -12,12 +12,13 @@ private:
         struct command_parser_result *res;
 
         TgBot::Bot bot;
+        struct ini_config* config;
 
 public:
-        fadhil_riyanto_bot(const std::string bot_token);
+        fadhil_riyanto_bot(struct ini_config* config);
         void bot_eventloop(void);
         void bot_show_basic_config(void);
-        void bot_handle_message(void);
+        void bot_handle_message(TgBot::Message::Ptr *msg);
 };
 
 

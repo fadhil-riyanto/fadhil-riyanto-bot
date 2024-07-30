@@ -26,13 +26,8 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *msg)
 {
-        // log_info("...")
-        this->bot.getApi().sendMessage((*msg)->chat->id, "string: " + (*msg)->text);
-
-        // struct FadhilRiyanto::string_utils::command_parser_result res;
-        // struct FadhilRiyanto::string_utils::command_parser_config parseconf = {
-        //         .command_prefix = 
-        // }
+        log_info("%d : %s", (*msg)->chat->id, (*msg)->text.c_str());
+        // this->bot.getApi().sendMessage((*msg)->chat->id, "string: " + (*msg)->text);
 }
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
@@ -40,7 +35,6 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
 
         this->bot.getEvents().onAnyMessage([this](TgBot::Message::Ptr message) -> void {
                 this->bot_handle_message(&message);
-                
         });
         
         try {
@@ -66,6 +60,7 @@ int main()
         }
 
         log_set_quiet(config.logger);
+        ini_show_config(&config);
 
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config);
         fadhil_riyanto_bot.bot_show_basic_config();
