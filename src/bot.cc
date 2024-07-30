@@ -9,6 +9,7 @@
 #include <tgbot/tgbot.h>
 #include "headers/inih_parser.h"
 #include "../submodule/inih/ini.h"
+#include "../submodule/log.c-patched/src/log.h"
 #include "headers/bot.h"
 
 FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(const std::string bot_token) : bot(bot_token)
@@ -17,18 +18,26 @@ FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(const std::string bot_toke
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
 {
-        printf("bot_username: %s\n", this->bot.getApi().getMe()->username.c_str());
+        log_info("bot_username: %s", this->bot.getApi().getMe()->username.c_str());
         
 }
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
 {
+
+        this->bot.getEvents().onAnyMessage([this](TgBot::Message::Ptr message) -> void {
+                log_info("User wrote %s", message->text.c_str());
+                if (StringTools::startsWith(message->text, "/start")) {
+                        return;
+                }
+                this->bot.getApi().sendMessage(message->chat->id, "Your message is: " + message->text);
+        });
         
         try {
                 
-                TgBot::TgLongPoll longPoll(bot);
+                TgBot::TgLongPoll longPoll(this->bot);
                 while (true) {
-                        printf("Long poll started\n");
+                        log_info("Long poll started");
                         longPoll.start();
                 }
         } catch (TgBot::TgException& e) {
@@ -41,8 +50,10 @@ int main()
         struct ini_config config;
 
         if (ini_parse("config.ini", parse_config_cb, &config)) {
-                // printf("%s", "Can't load config.ini \n");
+                printf("%s", "Can't load config.ini \n");
         }
+
+        log_set_quiet(config.logger);
 
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(config.bot_token);
         fadhil_riyanto_bot.bot_show_basic_config();
