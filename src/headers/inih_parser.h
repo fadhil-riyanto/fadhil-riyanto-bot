@@ -16,4 +16,6 @@ struct ini_config {
 int parse_config_cb(void* user, const char* section, const char* name,
                                 const char* value);
 
+void ini_free_mem(struct ini_config *config);
+
 #endif

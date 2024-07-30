@@ -26,3 +26,9 @@ int parse_config_cb(void* user, const char* section, const char* name,
         }
         return 1;
 }
+
+
+void ini_free_mem(struct ini_config *config)
+{
+        free(config->bot_token);
+}
