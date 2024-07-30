@@ -6,16 +6,21 @@
  */
 
 #include "header/command_parser.h"
-#include <cstddef>
+#include <cstdio>
 #include <stdexcept>
+#include <string>
 
 namespace FadhilRiyanto {
 
 command_parser::command_parser(std::string rawstr, 
-                                struct command_parser_config *parseconf)
+                                struct command_parser_config *parseconf, struct command_parser_result *res)
 {
         this->rawstr = rawstr;
         this->parseconf = parseconf;
+        this->res = res;
+
+        /* init data */
+        this->res->my_turn = false;
 }
 
 /* return */
@@ -39,11 +44,41 @@ std::tuple<bool, std::string::size_type> command_parser::command_has_value(void)
 std::string command_parser::get_raw_command(void)
 {
         auto [has_value, cur_off] = this->command_has_value();
+        std::string strret;
+        std::string::size_type npos;
 
         if (has_value) {
-                return this->rawstr.substr(0, cur_off);
+                strret = this->rawstr.substr(0, cur_off);
         } else {
-                return this->rawstr;
+                strret = this->rawstr;
+        }
+
+        /* find @ */
+        npos = strret.find("@");
+        
+        if (npos == std::string::npos) {
+                /* returned on no username detected */
+                res->my_turn = true;
+                return strret;
+        } else {
+                /* returned on username */
+
+                if (!this->parseconf->bot_username.compare(strret.substr(npos, cur_off)) 
+                        && cur_off != std::string::npos) {
+
+                        res->my_turn = true;
+                        return strret.substr(0, npos);
+                } else {
+                        if (!has_value) {
+                                
+                                if (!this->parseconf->bot_username.compare(strret.substr(npos, this->rawstr.length() - 1))) {
+                                        res->my_turn = true;
+                                        return strret.substr(0, npos);
+                                }
+                        }
+                        return "invalid";
+                }
+                
         }
 }
 
