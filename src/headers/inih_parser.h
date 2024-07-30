@@ -11,6 +11,8 @@
 struct ini_config {
         char*           bot_token;
         bool            logger;
+        char            command_prefix;
+        char*           bot_username;
 };
 
 int parse_config_cb(void* user, const char* section, const char* name,

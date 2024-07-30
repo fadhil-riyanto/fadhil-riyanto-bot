@@ -21,6 +21,12 @@ int parse_config_cb(void* user, const char* section, const char* name,
                 char* tmpptr = strdup(value);
                 config->logger = (strcmp(tmpptr, "true") == 0) ? true : false;
                 free(tmpptr);
+        } else if (MATCH("TELEGRAM", "command_prefix")) {
+                char* tmpptr = strdup(value);
+                config->command_prefix = tmpptr[0];
+                free(tmpptr);
+        } else if (MATCH("TELEGRAM", "bot_username")) {
+                config->bot_username = strdup(value);
         } else {
                 return 0;
         }
@@ -31,4 +37,5 @@ int parse_config_cb(void* user, const char* section, const char* name,
 void ini_free_mem(struct ini_config *config)
 {
         free(config->bot_token);
+        free(config->bot_username);
 }
