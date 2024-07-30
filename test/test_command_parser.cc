@@ -2,15 +2,17 @@
 
 #include "header/command_parser.h"
 
+struct FadhilRiyanto::command_parser_config parse_config = {
+        .command_prefix = '/',
+        .bot_username = "@fadhil_riyanto_bot"
+};
+
 TEST(compare_test, test_if_command_is_valid) 
 {
-        /* parse config */
-        struct FadhilRiyanto::command_parser_config parse_config = {
-              .command_prefix = '/'
-        };
-
+        struct FadhilRiyanto::command_parser_result res;
         std::string sample = "/info";
-        FadhilRiyanto::command_parser parser(sample, &parse_config);
+
+        FadhilRiyanto::command_parser parser(sample, &parse_config, &res);
         
         std::string retstr = parser.get_raw_command();
 
@@ -19,13 +21,10 @@ TEST(compare_test, test_if_command_is_valid)
 
 TEST(compare_test, test_if_value_is_valid) 
 {
-        /* parse config */
-        struct FadhilRiyanto::command_parser_config parse_config = {
-              .command_prefix = '/'
-        };
-
         std::string sample = "/info abc";
-        FadhilRiyanto::command_parser parser(sample, &parse_config);
+        struct FadhilRiyanto::command_parser_result res;
+
+        FadhilRiyanto::command_parser parser(sample, &parse_config, &res);
         
         std::string retstr = parser.get_raw_value();
 
@@ -34,13 +33,10 @@ TEST(compare_test, test_if_value_is_valid)
 
 TEST(compare_test, test_if_value_is_invalid) 
 {
-        /* parse config */
-        struct FadhilRiyanto::command_parser_config parse_config = {
-              .command_prefix = '/'
-        };
-
         std::string sample = "/info";
-        FadhilRiyanto::command_parser parser(sample, &parse_config);
+        struct FadhilRiyanto::command_parser_result res;
+
+        FadhilRiyanto::command_parser parser(sample, &parse_config, &res);
         
         std::string retstr = parser.get_raw_value();
 
