@@ -23,7 +23,9 @@ int parse_config_cb(void* user, const char* section, const char* name,
                 config->logger = (strcmp(tmpptr, "true") == 0) ? true : false;
                 free(tmpptr);
         } else if (MATCH("TELEGRAM", "command_prefix")) {
-                config->command_prefix = strdup(value);
+                char* tmpptr = strdup(value);
+                config->command_prefix = *tmpptr;
+                free(tmpptr);
         } else if (MATCH("TELEGRAM", "bot_username")) {
                 config->bot_username = strdup(value);
         } else {
@@ -43,7 +45,7 @@ void ini_show_config(struct ini_config *config)
 {
         log_info("config loaded \"bot_token\" = \"%s\"", config->bot_token);
         log_info("config loaded \"quiet_logger\" = \"%s\"", config->logger == 1 ? "true" : "false");
-        log_info("config loaded \"command_prefix\" = \"%s\"", config->command_prefix);
+        log_info("config loaded \"command_prefix\" = \"%c\"", config->command_prefix);
         log_info("config loaded \"bot_username\" = \"%s\"", config->bot_username);
         
         

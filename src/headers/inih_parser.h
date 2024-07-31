@@ -11,7 +11,7 @@
 struct ini_config {
         char*           bot_token;
         bool            logger;
-        char*           command_prefix;
+        char            command_prefix;
         char*           bot_username;
 };
 
