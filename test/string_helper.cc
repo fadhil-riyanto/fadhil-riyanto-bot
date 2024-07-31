@@ -22,9 +22,9 @@ std::string string_helper::string_lowercase(std::string inp)
 bool string_helper::str2bool(std::string inp) 
 {
         std::string sanitized_inp = FadhilRiyanto::string_utils::string_helper::string_lowercase(inp);
-        printf("%s\n", sanitized_inp.c_str());
+        // printf("%s\n", sanitized_inp.c_str());
 
-        if (inp.compare("true") == 0) {
+        if (sanitized_inp.compare("true") == 0) {
                 return true;
         }  else {
                 return false;

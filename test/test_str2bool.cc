@@ -26,6 +26,15 @@ TEST(str2bool, str2bool)
 
 }
 
+TEST(str2bool, str2bool_w_strtolower) 
+{
+        std::string sample = "trUe";
+        bool ret = FadhilRiyanto::string_utils::string_helper::str2bool(sample);
+
+        EXPECT_EQ(ret, true);
+
+}
+
 TEST(str2bool, str2bool_false) 
 {
         std::string sample = "truewe";
