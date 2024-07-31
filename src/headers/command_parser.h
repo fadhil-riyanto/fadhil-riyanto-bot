@@ -37,6 +37,8 @@ public:
         command_parser(std::string rawstr, struct command_parser_config *parseconf, struct command_parser_result *res);
         std::string get_raw_command(void);
         std::string get_raw_value(void);
+
+        static void command_parser_debug(struct command_parser_result *res);
 };
 
 } /* namespace */

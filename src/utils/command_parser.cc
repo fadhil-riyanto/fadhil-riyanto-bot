@@ -105,4 +105,12 @@ std::string command_parser::get_raw_value(void)
         }
 }
 
+static void command_parser_debug(struct command_parser_result *res, bool enable)
+{
+        log_debug("my_turn : %s", res->my_turn == 1 ? "true" : "false");
+        log_debug("command : %s", res->command.c_str());
+        log_debug("value : %s", res->value.c_str());
+        
+}
+
 }
