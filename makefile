@@ -10,10 +10,13 @@ inih_parser:
 log_c:
 	${CC} submodule/log.c-patched/src/log.cc -c -o ${OBJDIR}/log_c.o ${DEBUGFLAGS} -DLOG_USE_COLOR
 
+utils_command_parser:
+	${CC} src/utils/command_parser.cc -c -o ${OBJDIR}/utils_command_parser.o ${DEBUGFLAGS}
+
 main_bot: 
 	${CC} src/bot.cc -c -o ${OBJDIR}/bot.o ${DEBUGFLAGS}
 
-all_libs: inih_parser main_bot log_c
+all_libs: inih_parser main_bot log_c utils_command_parser
 
 all: build/*.o
 	${CC} $^ -o fadhil_riyanto_bot ${LIB}

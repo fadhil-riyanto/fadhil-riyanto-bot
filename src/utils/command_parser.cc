@@ -5,10 +5,11 @@
  *  https://github.com/fadhil-riyanto/telegram-bot
  */
 
-#include "header/command_parser.h"
+#include "../headers/command_parser.h"
 #include <cstdio>
 #include <stdexcept>
 #include <string>
+#include "../../submodule/log.c-patched/src/log.h"
 
 namespace FadhilRiyanto::string_utils {
 
@@ -58,7 +59,8 @@ std::string command_parser::get_raw_command(void)
         
         if (npos == std::string::npos) {
                 /* returned on no username detected */
-                res->my_turn = true;
+                this->res->my_turn = true;
+                this->res->command = strret;
                 return strret;
         } else {
                 /* returned on username */
@@ -67,15 +69,20 @@ std::string command_parser::get_raw_command(void)
                         && cur_off != std::string::npos) {
 
                         res->my_turn = true;
+                        this->res->command = strret.substr(0, npos);
                         return strret.substr(0, npos);
                 } else {
                         if (!has_value) {
                                 
                                 if (!this->parseconf->bot_username.compare(strret.substr(npos, this->rawstr.length() - 1))) {
-                                        res->my_turn = true;
+                                        this->res->my_turn = true;
+                                        this->res->command = strret.substr(0, npos);
                                         return strret.substr(0, npos);
                                 }
                         }
+
+                        this->res->command = "invalid";
+
                         return "invalid";
                 }
                 
@@ -90,8 +97,10 @@ std::string command_parser::get_raw_value(void)
                 /* 
                 * cur + 1 = trim space char
                 */
+                this->res->value = this->rawstr.substr((cur_off + 1), this->rawstr.length());
                 return this->rawstr.substr((cur_off + 1), this->rawstr.length());
         } else {
+                this->res->value = "";
                 return "";
         }
 }

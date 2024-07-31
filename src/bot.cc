@@ -27,7 +27,28 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
 void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *msg)
 {
         log_info("%d : %s", (*msg)->chat->id, (*msg)->text.c_str());
-        // this->bot.getApi().sendMessage((*msg)->chat->id, "string: " + (*msg)->text);
+
+        struct string_utils::command_parser_config parse_config = {
+                .command_prefix = this->config->command_prefix,
+                .bot_username = this->config->bot_username
+        };
+
+        struct string_utils::command_parser_result parse_res;
+
+        string_utils::command_parser parse((*msg)->text, &parse_config, &parse_res);
+        
+        try {
+                parse.get_raw_command();
+                parse.get_raw_value();
+        } catch (std::invalid_argument) {
+                /* handle non command message here */
+        }
+
+        if (parse_res.my_turn) {
+                this->bot.getApi().sendMessage((*msg)->chat->id, "string: " + parse_res.command);
+        }
+        
+        // 
 }
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
