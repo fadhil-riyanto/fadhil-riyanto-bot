@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "headers/inih_parser.h"
+#include "headers/string_helper.h"
 #include "../submodule/log.c-patched/src/log.h"
 
 int parse_config_cb(void* user, const char* section, const char* name,
@@ -20,7 +21,7 @@ int parse_config_cb(void* user, const char* section, const char* name,
                 config->bot_token = strdup(value);
         } else if (MATCH("RUNTIME", "quiet_logger")) {
                 char* tmpptr = strdup(value);
-                config->logger = (strcmp(tmpptr, "true") == 0) ? true : false;
+                config->logger = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
                 free(tmpptr);
         } else if (MATCH("TELEGRAM", "command_prefix")) {
                 char* tmpptr = strdup(value);
