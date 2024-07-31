@@ -38,7 +38,7 @@ public:
         std::string get_raw_command(void);
         std::string get_raw_value(void);
 
-        static void command_parser_debug(struct command_parser_result *res);
+        void command_parser_debug(bool enable);
 };
 
 } /* namespace */

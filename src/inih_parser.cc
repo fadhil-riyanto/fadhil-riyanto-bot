@@ -19,13 +19,21 @@ int parse_config_cb(void* user, const char* section, const char* name,
         #define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
         if (MATCH("TELEGRAM", "bot_token")) {
                 config->bot_token = strdup(value);
-        } else if (MATCH("RUNTIME", "quiet_logger")) {
+        } else if (MATCH("RUNTIME", "enable_all_log")) {
                 char* tmpptr = strdup(value);
-                config->logger = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
+                config->enable_all_log = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
                 free(tmpptr);
         } else if (MATCH("TELEGRAM", "command_prefix")) {
                 char* tmpptr = strdup(value);
                 config->command_prefix = *tmpptr;
+                free(tmpptr);
+        } else if (MATCH("RUNTIME", "enable_command_debug_log")) {
+                char* tmpptr = strdup(value);
+                config->enable_command_debug_log = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
+                free(tmpptr);
+        } else if (MATCH("RUNTIME", "enable_pool_start_log")) {
+                char* tmpptr = strdup(value);
+                config->enable_pool_start_log = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
                 free(tmpptr);
         } else if (MATCH("TELEGRAM", "bot_username")) {
                 config->bot_username = strdup(value);
@@ -45,7 +53,7 @@ void ini_free_mem(struct ini_config *config)
 void ini_show_config(struct ini_config *config)
 {
         log_info("config loaded \"bot_token\" = \"%s\"", config->bot_token);
-        log_info("config loaded \"quiet_logger\" = \"%s\"", config->logger == 1 ? "true" : "false");
+        log_info("config loaded \"enable_all_log\" = \"%s\"", config->enable_all_log == 1 ? "true" : "false");
         log_info("config loaded \"command_prefix\" = \"%c\"", config->command_prefix);
         log_info("config loaded \"bot_username\" = \"%s\"", config->bot_username);
         

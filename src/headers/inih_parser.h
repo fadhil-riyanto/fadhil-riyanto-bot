@@ -10,7 +10,9 @@
 
 struct ini_config {
         char*           bot_token;
-        bool            logger;
+        bool            enable_all_log;
+        bool            enable_command_debug_log;
+        bool            enable_pool_start_log;
         char            command_prefix;
         char*           bot_username;
 };

@@ -40,12 +40,13 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
         try {
                 parse.get_raw_command();
                 parse.get_raw_value();
+                parse.command_parser_debug(this->config->enable_command_debug_log);
         } catch (std::invalid_argument) {
                 /* handle non command message here */
         }
 
         if (parse_res.my_turn) {
-                this->bot.getApi().sendMessage((*msg)->chat->id, "string: " + parse_res.command);
+                this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
         }
         
         // 
@@ -62,7 +63,10 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
                 
                 TgBot::TgLongPoll longPoll(this->bot);
                 while (true) {
-                        log_info("Long poll started");
+                        if (this->config->enable_pool_start_log == true) {
+                                log_info("Long poll started");
+                        }
+                        
                         longPoll.start();
                 }
         } catch (TgBot::TgException& e) {
@@ -80,7 +84,7 @@ int main()
                 return -1;
         }
 
-        log_set_quiet(config.logger);
+        log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
 
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config);
