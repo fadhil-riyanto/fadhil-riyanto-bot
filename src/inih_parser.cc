@@ -19,24 +19,24 @@ int parse_config_cb(void* user, const char* section, const char* name,
         #define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
         if (MATCH("TELEGRAM", "bot_token")) {
                 config->bot_token = strdup(value);
-        } else if (MATCH("RUNTIME", "enable_all_log")) {
-                char* tmpptr = strdup(value);
-                config->enable_all_log = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
-                free(tmpptr);
         } else if (MATCH("TELEGRAM", "command_prefix")) {
                 char* tmpptr = strdup(value);
                 config->command_prefix = *tmpptr;
                 free(tmpptr);
-        } else if (MATCH("RUNTIME", "enable_command_debug_log")) {
+        }  else if (MATCH("TELEGRAM", "bot_username")) {
+                config->bot_username = strdup(value);
+        } else if (MATCH("DEBUG", "enable_all_log")) {
+                char* tmpptr = strdup(value);
+                config->enable_all_log = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
+                free(tmpptr);
+        } else if (MATCH("DEBUG", "enable_command_debug_log")) {
                 char* tmpptr = strdup(value);
                 config->enable_command_debug_log = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
                 free(tmpptr);
-        } else if (MATCH("RUNTIME", "enable_pool_start_log")) {
+        } else if (MATCH("DEBUG", "enable_pool_start_log")) {
                 char* tmpptr = strdup(value);
                 config->enable_pool_start_log = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
                 free(tmpptr);
-        } else if (MATCH("TELEGRAM", "bot_username")) {
-                config->bot_username = strdup(value);
         } else {
                 return 0;
         }
