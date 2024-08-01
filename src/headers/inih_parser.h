@@ -13,6 +13,7 @@ struct ini_config {
         bool            enable_all_log;
         bool            enable_command_debug_log;
         bool            enable_pool_start_log;
+        bool            enable_thread_queue_debug;
         char            command_prefix;
         char*           bot_username;
 };

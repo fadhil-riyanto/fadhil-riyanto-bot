@@ -37,6 +37,10 @@ int parse_config_cb(void* user, const char* section, const char* name,
                 char* tmpptr = strdup(value);
                 config->enable_pool_start_log = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
                 free(tmpptr);
+        } else if (MATCH("DEBUG", "enable_thread_queue_debug")) {
+                char* tmpptr = strdup(value);
+                config->enable_thread_queue_debug = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
+                free(tmpptr);
         } else {
                 return 0;
         }
