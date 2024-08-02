@@ -10,7 +10,7 @@
 #include "../../submodule/log.c-patched/src/log.h"
 #include <cstdio>
 
-FadhilRiyanto::threading::thread_queue::thread_queue(int depth, struct queue_ring *ring)
+void FadhilRiyanto::threading::thread_queue::thread_queue_init(int depth, struct queue_ring *ring)
 {
         ring->queue_list = new struct message_queue_data[depth];
         ring->depth = depth;

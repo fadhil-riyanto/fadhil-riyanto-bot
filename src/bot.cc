@@ -48,8 +48,8 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
         }
 
         if (parse_res.my_turn) {
-                FadhilRiyanto::threading::thread_queue thread_queue(10, ring);
-                thread_queue.send_queue(ring, (*msg));
+                
+                FadhilRiyanto::threading::thread_queue::send_queue(ring, (*msg));
                 FadhilRiyanto::threading::thread_helper::queue_debugger(10, ring);
 
                 this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
@@ -61,6 +61,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
 void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
 {
         struct FadhilRiyanto::threading::queue_ring ring;
+        FadhilRiyanto::threading::thread_queue::thread_queue_init(10, &ring);
 
         this->bot.getEvents().onAnyMessage([this, &ring](TgBot::Message::Ptr message) -> void {
                 this->bot_handle_message(&message, &ring);
