@@ -1,6 +1,8 @@
 #include "command_parser.h"
 #include <tgbot/tgbot.h>
 
+#include "threading.h"
+
 #ifndef BOT_H
 #define BOT_H
 
@@ -18,7 +20,8 @@ public:
         fadhil_riyanto_bot(struct ini_config* config);
         void bot_eventloop(void);
         void bot_show_basic_config(void);
-        void bot_handle_message(TgBot::Message::Ptr *msg);
+        void bot_handle_message(TgBot::Message::Ptr *msg,
+                struct FadhilRiyanto::threading::queue_ring *ring);
 };
 
 
