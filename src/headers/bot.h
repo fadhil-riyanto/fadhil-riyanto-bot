@@ -6,6 +6,8 @@
 #ifndef BOT_H
 #define BOT_H
 
+#include <csignal>
+
 namespace FadhilRiyanto {
 
 class fadhil_riyanto_bot {
@@ -14,10 +16,11 @@ private:
         struct command_parser_result *res;
 
         TgBot::Bot bot;
-        struct ini_config* config;
+        struct ini_config *config;
+        volatile std::sig_atomic_t *signal_status;
 
 public:
-        fadhil_riyanto_bot(struct ini_config* config);
+        fadhil_riyanto_bot(struct ini_config* config, volatile std::sig_atomic_t *signal_status);
         void bot_eventloop(void);
         void bot_show_basic_config(void);
         void bot_handle_message(TgBot::Message::Ptr *msg,

@@ -5,6 +5,7 @@
  *  https://github.com/fadhil-riyanto/telegram-bot
  */
 
+#include <csignal>
 #include <stdio.h>
 #include <tgbot/tgbot.h>
 #include "headers/inih_parser.h"
@@ -14,9 +15,23 @@
 #include "headers/bot.h"
 #include "headers/command_parser.h"
 
-FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config) : bot(config->bot_token)
+namespace
+{
+    volatile std::sig_atomic_t global_signal_status;
+}
+
+
+void signal_handler(int signal)
+{
+        global_signal_status = signal;
+}
+
+
+FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config, 
+        volatile std::sig_atomic_t *signal_status) : bot(config->bot_token)
 {
         this->config = config;
+        this->signal_status = signal_status;
 }
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
@@ -71,7 +86,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         try {
                 
                 TgBot::TgLongPoll longPoll(this->bot);
-                while (true) {
+                while (true && *this->signal_status != SIGINT) {
                         if (this->config->enable_pool_start_log == true) {
                                 log_info("Long poll started");
                         }
@@ -85,6 +100,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
 
 int main()
 {
+        std::signal(SIGINT, signal_handler);
         struct ini_config config;
 
         if (ini_parse("config.ini", parse_config_cb, &config) < 0) {
@@ -96,7 +112,7 @@ int main()
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
 
-        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config);
+        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status);
         fadhil_riyanto_bot.bot_show_basic_config();
         fadhil_riyanto_bot.bot_eventloop();
 
