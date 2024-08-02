@@ -5,6 +5,9 @@
  *  https://github.com/fadhil-riyanto/telegram-bot
  */
 
+#ifndef THREADING_H
+#define THREADING_H
+
 #include <tgbot/tgbot.h>
 
 namespace FadhilRiyanto::threading {
@@ -42,5 +45,7 @@ public:
         bool send_queue(struct queue_ring *ring, TgBot::Message::Ptr message);
 };
 
-
 }
+
+
+#endif
