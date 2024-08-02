@@ -11,16 +11,22 @@ namespace FadhilRiyanto::threading {
 
 struct message_queue_data {
         TgBot::Message::Ptr data;
-        int queue_num;
-        int state;
-        int need_join;
+
+        /* unique number assigned each queue */
+        long queue_num;
+
+        /* true if alive */
+        bool state;
+
+        /* true before cleaned by eventloop thread join */
+        bool need_join;
 };
 
 struct queue_ring
 {
         struct message_queue_data *queue_list;
         int current_size;
-        int max_size;
+        int depth;
 };
 
 class thread_helper {
@@ -30,10 +36,10 @@ public:
 
 class thread_queue {
 private:
-        int counter;
+        long counter;
 public:
         thread_queue(int depth, struct queue_ring *ring);
-        bool send_queue();
+        bool send_queue(struct queue_ring *ring, TgBot::Message::Ptr message);
 };
 
 
