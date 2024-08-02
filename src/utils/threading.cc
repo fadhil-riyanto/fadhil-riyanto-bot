@@ -21,7 +21,7 @@ FadhilRiyanto::threading::thread_queue::thread_queue(int depth, struct queue_rin
         }
 
         /* init counter */
-        this->counter = 0;
+        
 };
 
 bool FadhilRiyanto::threading::thread_queue::send_queue(struct queue_ring *ring, TgBot::Message::Ptr message)
@@ -31,11 +31,12 @@ bool FadhilRiyanto::threading::thread_queue::send_queue(struct queue_ring *ring,
                         (ring->queue_list + i)->queue_num == -1) {
 
                         /* set current state to ring */
-                        this->counter = this->counter + 1;
                         (ring->queue_list + i)->data = message;
                         (ring->queue_list + i)->need_join = false;
-                        (ring->queue_list + i)->queue_num = this->counter;
+                        (ring->queue_list + i)->queue_num = ring->counter;
                         (ring->queue_list + i)->state = true;
+
+                        ring->counter = ring->counter + 1;
 
                         return true;
                 }

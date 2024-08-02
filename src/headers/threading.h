@@ -30,6 +30,9 @@ struct queue_ring
         struct message_queue_data *queue_list;
         int current_size;
         int depth;
+        
+         /* do not touch */
+        long counter;
 };
 
 class thread_helper {
@@ -38,8 +41,6 @@ public:
 };
 
 class thread_queue {
-private:
-        long counter;
 public:
         thread_queue(int depth, struct queue_ring *ring);
         bool send_queue(struct queue_ring *ring, TgBot::Message::Ptr message);
