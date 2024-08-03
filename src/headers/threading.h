@@ -45,6 +45,7 @@ class thread_queue {
 public:
         static void thread_queue_init(int depth, struct queue_ring *ring);
         static bool send_queue(struct queue_ring *ring, TgBot::Message::Ptr message);
+        static void thread_queue_destroy(int depth, struct queue_ring *ring);
 };
 
 class thread_queue_runner {

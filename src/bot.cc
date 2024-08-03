@@ -96,6 +96,8 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         } catch (TgBot::TgException& e) {
                 printf("error: %s\n", e.what());
         }
+
+        FadhilRiyanto::threading::thread_queue::thread_queue_destroy(10, &ring);
 }
 
 int main()

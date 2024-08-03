@@ -25,6 +25,12 @@ void FadhilRiyanto::threading::thread_queue::thread_queue_init(int depth, struct
         
 };
 
+void FadhilRiyanto::threading::thread_queue::thread_queue_destroy(int depth, struct queue_ring *ring)
+{
+        delete [] ring->queue_list;
+        
+};
+
 bool FadhilRiyanto::threading::thread_queue::send_queue(struct queue_ring *ring, TgBot::Message::Ptr message)
 {
         for(int i = 0; i < ring->depth; i++) {
