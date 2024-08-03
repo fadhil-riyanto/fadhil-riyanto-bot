@@ -22,6 +22,7 @@ void FadhilRiyanto::threading::thread_queue::thread_queue_init(int depth, struct
         }
 
         /* init counter */
+        ring->counter = 0;
         
 };
 
@@ -59,7 +60,7 @@ void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct q
         for(int i = 0; i < depth; i++) {
                 log_debug("qw %d | need_join %s, queue_num %d, state %s", i, 
                         FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->need_join).c_str(),
-                        (ring->queue_list + i)->need_join,
+                        (ring->queue_list + i)->queue_num,
                         FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->state).c_str());
         }
 };
