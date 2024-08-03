@@ -98,7 +98,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         }
         *this->signal_status = SIGINT;
 
-        FadhilRiyanto::threading::thread_queue::thread_queue_destroy(10, &ring);
+        FadhilRiyanto::threading::thread_queue::thread_queue_destroy(&ring);
 }
 
 int main()

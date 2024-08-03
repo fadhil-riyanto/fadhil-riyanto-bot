@@ -26,7 +26,7 @@ void FadhilRiyanto::threading::thread_queue::thread_queue_init(int depth, struct
         
 };
 
-void FadhilRiyanto::threading::thread_queue::thread_queue_destroy(int depth, struct queue_ring *ring)
+void FadhilRiyanto::threading::thread_queue::thread_queue_destroy(struct queue_ring *ring)
 {
         delete [] ring->queue_list;
         
