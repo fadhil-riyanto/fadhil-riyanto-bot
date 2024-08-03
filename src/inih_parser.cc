@@ -61,10 +61,22 @@ void ini_free_mem(struct ini_config *config)
 
 void ini_show_config(struct ini_config *config)
 {
-        log_info("config loaded \"bot_token\" = \"%s\"", config->bot_token);
-        log_info("config loaded \"enable_all_log\" = \"%s\"", config->enable_all_log == 1 ? "true" : "false");
-        log_info("config loaded \"command_prefix\" = \"%c\"", config->command_prefix);
-        log_info("config loaded \"bot_username\" = \"%s\"", config->bot_username);
+        log_info("config loaded \"[TELEGRAM] bot_token\" = \"%s\"", config->bot_token);
+        log_info("config loaded \"[TELEGRAM] command_prefix\" = \"%c\"", config->command_prefix);
+        log_info("config loaded \"[TELEGRAM] bot_username\" = \"%s\"", config->bot_username);
+
+        log_info("config loaded \"[DEBUG] enable_all_log\" = \"%s\"", 
+                FadhilRiyanto::string_utils::string_helper::bool2str(config->enable_all_log).c_str());
+        log_info("config loaded \"[DEBUG] enable_command_debug_log\" = \"%s\"", 
+                FadhilRiyanto::string_utils::string_helper::bool2str(config->enable_command_debug_log).c_str());
+        log_info("config loaded \"[DEBUG] enable_pool_start_log\" = \"%s\"", 
+                FadhilRiyanto::string_utils::string_helper::bool2str(config->enable_pool_start_log).c_str());
+        log_info("config loaded \"[DEBUG] enable_thread_queue_debug\" = \"%s\"", 
+                FadhilRiyanto::string_utils::string_helper::bool2str(config->enable_thread_queue_debug).c_str());
+        
+        log_info("config loaded \"[RUNTIME] queue_depth\" = \"%d\"", config->queue_depth);
+        log_info("config loaded \"[RUNTIME] queue_eventloop_sleep_ms\" = \"%d\"", config->queue_eventloop_sleep_ms);
+        
         
         
 }
