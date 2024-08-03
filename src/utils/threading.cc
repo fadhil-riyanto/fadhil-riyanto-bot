@@ -65,10 +65,9 @@ void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct q
         }
 };
 
-void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(int depth, struct queue_ring *ring,
+void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(struct queue_ring *ring,
         std::sig_atomic_t *signal_handler)
 {
-        this->depth = depth;
         this->ring = ring;
         this->signal_handler = signal_handler;
 }

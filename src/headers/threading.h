@@ -50,13 +50,11 @@ public:
 
 class thread_queue_runner {
 private:
-        int depth;
         struct queue_ring *ring;
         std::sig_atomic_t *signal_handler;
 public:
-        void thread_queue_runner_link(int depth, struct queue_ring *ring, std::sig_atomic_t *signal_handler);
+        void thread_queue_runner_link(struct queue_ring *ring, std::sig_atomic_t *signal_handler);
         void create_child_eventloop();
-        void create_event_loop();
 };
 
 }
