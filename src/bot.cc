@@ -21,10 +21,10 @@ namespace
 }
 
 
-void signal_handler(int signal)
-{
-        global_signal_status = signal;
-}
+// void signal_handler(int signal)
+// {
+//         global_signal_status = signal;
+// }
 
 
 FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config, 
@@ -86,7 +86,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         try {
                 
                 TgBot::TgLongPoll longPoll(this->bot);
-                while (true && *this->signal_status != SIGINT) {
+                while (true) {
                         if (this->config->enable_pool_start_log == true) {
                                 log_info("Long poll started");
                         }
@@ -96,13 +96,14 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         } catch (TgBot::TgException& e) {
                 printf("error: %s\n", e.what());
         }
+        *this->signal_status = SIGINT;
 
         FadhilRiyanto::threading::thread_queue::thread_queue_destroy(10, &ring);
 }
 
 int main()
 {
-        std::signal(SIGINT, signal_handler);
+        // std::signal(SIGINT, signal_handler);
         struct ini_config config;
 
         if (ini_parse("config.ini", parse_config_cb, &config) < 0) {
