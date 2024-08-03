@@ -18,6 +18,7 @@ class string_helper {
 public:
         static std::string string_lowercase(std::string inp) ;
         static bool str2bool(std::string inp);
+        static std::string bool2str(bool inp);
 };
 
 }

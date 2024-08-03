@@ -7,6 +7,7 @@
 
 #include "../headers/string_helper.h"
 #include <cstddef>
+#include <string>
 
 namespace FadhilRiyanto::string_utils {
 
@@ -31,5 +32,9 @@ bool string_helper::str2bool(std::string inp)
         }
 }
 
+std::string string_helper::bool2str(bool inp)
+{
+        return (inp == true) ? "true" : "false";
+}
 
 }
