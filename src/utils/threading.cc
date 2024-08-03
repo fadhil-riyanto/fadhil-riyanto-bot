@@ -11,6 +11,7 @@
 #include <csignal>
 #include <cstdio>
 #include <thread>
+#include <chrono>
 
 void FadhilRiyanto::threading::thread_queue::thread_queue_init(int depth, struct queue_ring *ring)
 {
@@ -90,13 +91,14 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
                                 seen_largest++;
                         }
                 }
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 }
 
-void FadhilRiyanto::threading::thread_queue_runner::create_child_eventloop()
+std::thread FadhilRiyanto::threading::thread_queue_runner::create_child_eventloop()
 {
         /* init our separated thread */
         log_debug("creating thread ...");
         std::thread initializer(this->eventloop, this->ring, this->signal_handler);
-        initializer.detach();
+        return initializer;
 }
