@@ -16,6 +16,8 @@ struct ini_config {
         bool            enable_thread_queue_debug;
         char            command_prefix;
         char*           bot_username;
+        int             queue_depth;
+        int             queue_eventloop_sleep_ms;
 };
 
 int parse_config_cb(void* user, const char* section, const char* name,

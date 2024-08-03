@@ -5,6 +5,7 @@
  *  https://github.com/fadhil-riyanto/telegram-bot
  */
 
+#include <cstdlib>
 #include <stdlib.h>
 #include <string.h>
 #include "headers/inih_parser.h"
@@ -41,6 +42,10 @@ int parse_config_cb(void* user, const char* section, const char* name,
                 char* tmpptr = strdup(value);
                 config->enable_thread_queue_debug = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
                 free(tmpptr);
+        } else if (MATCH("RUNTIME", "queue_depth")) {
+                config->queue_depth = atoi(value);
+        }  else if (MATCH("RUNTIME", "queue_eventloop_sleep_ms")) {
+                config->queue_eventloop_sleep_ms = atoi(value);
         } else {
                 return 0;
         }
