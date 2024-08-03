@@ -67,7 +67,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
                 FadhilRiyanto::threading::thread_queue::send_queue(ring, (*msg));
                 FadhilRiyanto::threading::thread_helper::queue_debugger(10, ring);
 
-                this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
+                // this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
         }
         
         // 
@@ -79,7 +79,8 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         FadhilRiyanto::threading::thread_queue::thread_queue_init(10, &ring);
 
         FadhilRiyanto::threading::thread_queue_runner th_queue_runner;
-        th_queue_runner.thread_queue_runner_link(&ring, this->signal_status);
+        th_queue_runner.thread_queue_runner_link(&ring, this->signal_status, 
+                                                        &this->bot);
         std::thread runner_ret = th_queue_runner.create_child_eventloop();
 
         this->bot.getEvents().onAnyMessage([this, &ring](TgBot::Message::Ptr message) -> void {

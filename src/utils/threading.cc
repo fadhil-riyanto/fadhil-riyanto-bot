@@ -68,10 +68,11 @@ void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct q
 };
 
 void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(struct queue_ring *ring,
-        volatile std::sig_atomic_t *signal_handler)
+        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot)
 {
         this->ring = ring;
         this->signal_handler = signal_handler;
+        this->bot = bot;
 }
 
 // void FadhilRiyanto::threading::create_event_loop()
@@ -80,7 +81,7 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(str
 // }
 
 void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring *ring, 
-                        volatile std::sig_atomic_t *signal_handler)
+                        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot)
 {
         long seen_largest = 0;
         log_debug("completion queue thread created");
@@ -88,6 +89,12 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
                 for(int i = 0; i < ring->depth; i++) {
                         if ((ring->queue_list + i)->queue_num == seen_largest) {
                                 log_debug("create thread %lu", i);
+                                // this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
+                                
+                                bot->getApi().sendMessage(
+                                        ((ring->queue_list + i)->data)->chat->id,
+                                        ((ring->queue_list + i)->data)->text);
+
                                 seen_largest++;
                         }
                 }
@@ -99,6 +106,6 @@ std::thread FadhilRiyanto::threading::thread_queue_runner::create_child_eventloo
 {
         /* init our separated thread */
         log_debug("creating thread ...");
-        std::thread initializer(this->eventloop, this->ring, this->signal_handler);
+        std::thread initializer(this->eventloop, this->ring, this->signal_handler, this->bot);
         return initializer;
 }
