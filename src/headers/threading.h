@@ -8,6 +8,7 @@
 #ifndef THREADING_H
 #define THREADING_H
 
+#include <csignal>
 #include <tgbot/tgbot.h>
 
 namespace FadhilRiyanto::threading {
@@ -44,6 +45,17 @@ class thread_queue {
 public:
         static void thread_queue_init(int depth, struct queue_ring *ring);
         static bool send_queue(struct queue_ring *ring, TgBot::Message::Ptr message);
+};
+
+class thread_queue_runner {
+private:
+        int depth;
+        struct queue_ring *ring;
+        std::sig_atomic_t *signal_handler;
+public:
+        void thread_queue_runner_link(int depth, struct queue_ring *ring, std::sig_atomic_t *signal_handler);
+        void create_child_eventloop();
+        void create_event_loop();
 };
 
 }

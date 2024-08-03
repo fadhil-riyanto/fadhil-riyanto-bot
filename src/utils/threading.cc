@@ -9,6 +9,7 @@
 #include "../headers/int_helper.h"
 #include "../../submodule/log.c-patched/src/log.h"
 #include <cstdio>
+#include <thread>
 
 void FadhilRiyanto::threading::thread_queue::thread_queue_init(int depth, struct queue_ring *ring)
 {
@@ -56,3 +57,23 @@ void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct q
                         FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->state).c_str());
         }
 };
+
+void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(int depth, struct queue_ring *ring,
+        std::sig_atomic_t *signal_handler)
+{
+        this->depth = depth;
+        this->ring = ring;
+        this->signal_handler = signal_handler;
+}
+
+// void FadhilRiyanto::threading::create_event_loop()
+// {
+//         // while(this->signal_handler == 1)
+// }
+
+void FadhilRiyanto::threading::thread_queue_runner::create_child_eventloop()
+{
+        /* init our separated thread */
+        // std::thread initializer()
+
+}
