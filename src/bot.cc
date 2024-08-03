@@ -78,9 +78,12 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         struct FadhilRiyanto::threading::queue_ring ring;
         FadhilRiyanto::threading::thread_queue::thread_queue_init(10, &ring);
 
+        FadhilRiyanto::threading::thread_queue_runner th_queue_runner;
+        th_queue_runner.thread_queue_runner_link(&ring, this->signal_status);
+        th_queue_runner.create_child_eventloop();
+
         this->bot.getEvents().onAnyMessage([this, &ring](TgBot::Message::Ptr message) -> void {
                 this->bot_handle_message(&message, &ring);
-                
         });
         
         try {

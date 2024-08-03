@@ -8,6 +8,7 @@
 #include "../headers/threading.h"
 #include "../headers/int_helper.h"
 #include "../../submodule/log.c-patched/src/log.h"
+#include <csignal>
 #include <cstdio>
 #include <thread>
 
@@ -66,7 +67,7 @@ void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct q
 };
 
 void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(struct queue_ring *ring,
-        std::sig_atomic_t *signal_handler)
+        volatile std::sig_atomic_t *signal_handler)
 {
         this->ring = ring;
         this->signal_handler = signal_handler;
@@ -77,9 +78,25 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(str
 //         // while(this->signal_handler == 1)
 // }
 
+void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring *ring, 
+                        volatile std::sig_atomic_t *signal_handler)
+{
+        long seen_largest = 0;
+        log_debug("completion queue thread created");
+        while(true && *signal_handler != SIGINT) {
+                for(int i = 0; i < ring->depth; i++) {
+                        if ((ring->queue_list + i)->queue_num == seen_largest) {
+                                log_debug("create thread %lu", i);
+                                seen_largest++;
+                        }
+                }
+        }
+}
+
 void FadhilRiyanto::threading::thread_queue_runner::create_child_eventloop()
 {
         /* init our separated thread */
-        // std::thread initializer()
-
+        log_debug("creating thread ...");
+        std::thread initializer(this->eventloop, this->ring, this->signal_handler);
+        initializer.detach();
 }
