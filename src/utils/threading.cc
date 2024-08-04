@@ -94,10 +94,10 @@ void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx,
 
         (ring->queue_list + counter_idx)->need_join = 1;
         (ring->queue_list + counter_idx)->state = 0;
-        (ring->queue_list + counter_idx)->queue_num = -1;
 }
 
-void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
+void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int counter_idx, 
+                                                TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler)
 {
         /* setup state */
@@ -138,6 +138,10 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
                                 seen_largest++;
                         }
                 }
+
+                /* check thread state */
+                FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(ring);
+
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 }
@@ -148,4 +152,17 @@ std::thread FadhilRiyanto::threading::thread_queue_runner::create_child_eventloo
         log_debug("creating thread ...");
         std::thread initializer(this->eventloop, this->ring, this->signal_handler, this->bot);
         return initializer;
+}
+
+bool FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(struct queue_ring *ring)
+{
+        for(int i = 0; i < ring->depth; i++) {
+                if ((ring->queue_list + i)->need_join == 1) {
+                        (ring->queue_list + i)->handler_th.join();
+                        (ring->queue_list + i)->need_join = 0;
+                        (ring->queue_list + i)->queue_num = -1;
+                        log_info("joined thread %d with queue_num %d", i, (ring->queue_list + i)->queue_num);
+                }
+        }
+        return true;
 }
