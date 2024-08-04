@@ -10,11 +10,13 @@
 
 #include <csignal>
 #include <tgbot/tgbot.h>
+#include <thread>
 
 namespace FadhilRiyanto::threading {
 
 struct message_queue_data {
         TgBot::Message::Ptr data;
+        std::thread handler_th;
 
         /* unique number assigned each queue */
         long queue_num;
@@ -55,6 +57,9 @@ private:
         TgBot::Bot *bot;
 
         static void eventloop(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot);
+        static void process_msg(TgBot::Bot *bot, TgBot::Message::Ptr msg);
+        static void eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
+                                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
 public:
         void thread_queue_runner_link(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
                 TgBot::Bot *bot);

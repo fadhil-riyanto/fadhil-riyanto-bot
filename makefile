@@ -1,5 +1,5 @@
 CC = g++
-LIB = -lTgBot -lboost_system -lssl -lcrypto -lpthread
+LIB = -lTgBot -lboost_system -lssl -lcrypto -lpthread -lfmt
 DEBUGFLAGS = -ggdb3
 OBJDIR = build
 

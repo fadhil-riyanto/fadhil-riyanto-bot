@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <thread>
 #include <chrono>
+#include <fmt/core.h>
 
 void FadhilRiyanto::threading::thread_queue::thread_queue_init(int depth, struct queue_ring *ring)
 {
@@ -79,21 +80,53 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(str
 // {
 //         // while(this->signal_handler == 1)
 // }
+void FadhilRiyanto::threading::thread_queue_runner::process_msg(TgBot::Bot *bot, TgBot::Message::Ptr msg)
+{
+
+        std::string res = fmt::format("your message {}!\n", msg->text);
+
+        bot->getApi().sendMessage(
+                msg->chat->id,
+                res
+        );
+}
+
+void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
+                                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler)
+{
+        /* setup state */
+
+        (ring->queue_list + counter_idx)->state = 1;
+        (ring->queue_list + counter_idx)->need_join = 0;
+        
+
+        (ring->queue_list + counter_idx)->handler_th = std::thread(
+                FadhilRiyanto::threading::thread_queue_runner::process_msg, bot, msg
+        );
+}
 
 void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring *ring, 
                         volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot)
 {
         long seen_largest = 0;
+        
         log_debug("completion queue thread created");
+
         while(true && *signal_handler != SIGINT) {
                 for(int i = 0; i < ring->depth; i++) {
                         if ((ring->queue_list + i)->queue_num == seen_largest) {
                                 log_debug("create thread %lu", i);
+
+                                FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(
+                                        i, bot, (ring->queue_list + i)->data, ring, signal_handler
+                                );
                                 // this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
+                                // std::thread runner
                                 
-                                bot->getApi().sendMessage(
-                                        ((ring->queue_list + i)->data)->chat->id,
-                                        ((ring->queue_list + i)->data)->text);
+                                // std::thread ->
+                                
+
+                                
 
                                 seen_largest++;
                         }
