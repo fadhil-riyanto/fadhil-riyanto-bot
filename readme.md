@@ -5,6 +5,7 @@ personal assistant telegram bot
 - [TgBot](https://github.com/reo7sp/tgbot-cpp)
 - Boost
 - OpenSSL
+- [fmt](https://github.com/fmtlib/fmt)
 - Zlib
 - CUrl
 - [log.c](https://github.com/fadhil-riyanto/log.c-patched) (submodule)
