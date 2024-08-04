@@ -140,29 +140,55 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
                 }
 
                 /* check thread state */
-                FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(ring);
+                FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(ring, signal_handler);
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 }
 
-std::thread FadhilRiyanto::threading::thread_queue_runner::create_child_eventloop()
+void FadhilRiyanto::threading::thread_queue_runner::create_child_eventloop()
 {
         /* init our separated thread */
         log_debug("creating thread ...");
-        std::thread initializer(this->eventloop, this->ring, this->signal_handler, this->bot);
-        return initializer;
+        this->initializer_thread = std::thread(this->eventloop, this->ring, this->signal_handler, this->bot);
+        // std::thread initializer(this->eventloop, this->ring, this->signal_handler, this->bot);
+        // return initializer;
 }
 
-bool FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(struct queue_ring *ring)
+void FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(struct queue_ring *ring,
+                                                                        volatile std::sig_atomic_t *signal_handler)
 {
         for(int i = 0; i < ring->depth; i++) {
-                if ((ring->queue_list + i)->need_join == 1) {
+                if ((ring->queue_list + i)->need_join == 1 && *signal_handler != SIGINT) {
                         (ring->queue_list + i)->handler_th.join();
                         (ring->queue_list + i)->need_join = 0;
                         (ring->queue_list + i)->queue_num = -1;
                         log_info("joined thread %d with queue_num %d", i, (ring->queue_list + i)->queue_num);
                 }
         }
-        return true;
+        
+}
+
+void FadhilRiyanto::threading::thread_queue_runner::thread_queue_cleanup()
+{
+        log_info("entering");
+do_again:
+        int counter = 0;
+        for(int i = 0; i < ring->depth; i++) {
+                log_info("check");
+                if ((ring->queue_list + i)->state != 1)
+                        counter++;
+                if (counter == ring->depth)
+                        goto next;
+
+                /* bugnote: jump with counter reset */
+                else
+                        goto do_again;
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+next:
+        log_info("all thread is dead");
+        this->initializer_thread.join();
+
 }

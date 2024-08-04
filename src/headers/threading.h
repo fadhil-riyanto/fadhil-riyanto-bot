@@ -56,7 +56,9 @@ private:
         volatile std::sig_atomic_t *signal_handler;
         TgBot::Bot *bot;
 
-        static bool thread_zombie_cleaner(struct queue_ring *ring);
+        std::thread initializer_thread;
+
+        static void thread_zombie_cleaner(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
         static void eventloop(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot);
         static void process_msg(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
@@ -65,7 +67,8 @@ private:
 public:
         void thread_queue_runner_link(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
                 TgBot::Bot *bot);
-        std::thread create_child_eventloop();
+        void create_child_eventloop();
+        void thread_queue_cleanup();
 };
 
 }

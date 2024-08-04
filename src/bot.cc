@@ -81,7 +81,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         FadhilRiyanto::threading::thread_queue_runner th_queue_runner;
         th_queue_runner.thread_queue_runner_link(&ring, this->signal_status, 
                                                         &this->bot);
-        std::thread runner_ret = th_queue_runner.create_child_eventloop();
+        th_queue_runner.create_child_eventloop();
 
         this->bot.getEvents().onAnyMessage([this, &ring](TgBot::Message::Ptr message) -> void {
                 this->bot_handle_message(&message, &ring);
@@ -102,7 +102,9 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         }
         *this->signal_status = SIGINT;
 
-        runner_ret.join();
+        
+
+        th_queue_runner.thread_queue_cleanup();
         FadhilRiyanto::threading::thread_queue::thread_queue_destroy(&ring);
 }
 
@@ -120,11 +122,15 @@ int main()
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
 
+        printf("%s\n", "will exec?");
+
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status);
         fadhil_riyanto_bot.bot_show_basic_config();
         fadhil_riyanto_bot.bot_eventloop();
 
-        ini_free_mem(&config);
+        
+
+        // ini_free_mem(&config);
         return 0;
 
 }
