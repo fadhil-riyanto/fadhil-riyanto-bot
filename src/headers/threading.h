@@ -57,7 +57,8 @@ private:
         TgBot::Bot *bot;
 
         static void eventloop(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot);
-        static void process_msg(TgBot::Bot *bot, TgBot::Message::Ptr msg);
+        static void process_msg(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
+                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
         static void eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
 public:

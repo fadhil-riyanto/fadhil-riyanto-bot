@@ -80,7 +80,9 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(str
 // {
 //         // while(this->signal_handler == 1)
 // }
-void FadhilRiyanto::threading::thread_queue_runner::process_msg(TgBot::Bot *bot, TgBot::Message::Ptr msg)
+void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx, 
+                TgBot::Bot *bot, TgBot::Message::Ptr msg, 
+                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler)
 {
 
         std::string res = fmt::format("your message {}!\n", msg->text);
@@ -89,6 +91,10 @@ void FadhilRiyanto::threading::thread_queue_runner::process_msg(TgBot::Bot *bot,
                 msg->chat->id,
                 res
         );
+
+        (ring->queue_list + counter_idx)->need_join = 1;
+        (ring->queue_list + counter_idx)->state = 0;
+        (ring->queue_list + counter_idx)->queue_num = -1;
 }
 
 void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
@@ -101,7 +107,8 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int
         
 
         (ring->queue_list + counter_idx)->handler_th = std::thread(
-                FadhilRiyanto::threading::thread_queue_runner::process_msg, bot, msg
+                FadhilRiyanto::threading::thread_queue_runner::process_msg, 
+                        counter_idx, bot, msg, ring, signal_handler
         );
 }
 
