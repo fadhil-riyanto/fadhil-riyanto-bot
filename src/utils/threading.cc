@@ -175,7 +175,7 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_queue_cleanup()
         log_info("entering");
 do_again:
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        
+
         int counter = 0;
         for(int i = 0; i < ring->depth; i++) {
                 log_info("check");
@@ -190,7 +190,17 @@ do_again:
         else
                 goto do_again;
 next:
-        log_info("all thread is dead");
+        log_info("[EXIT] all thread is dead");
+
+        for(int i = 0; i < ring->depth; i++) {
+                if ((ring->queue_list + i)->need_join == 1) {
+                        (ring->queue_list + i)->handler_th.join();
+                        (ring->queue_list + i)->need_join = 0;
+                        (ring->queue_list + i)->queue_num = -1;
+                        log_info("[EXIT] joined thread %d with queue_num %d", i, (ring->queue_list + i)->queue_num);
+                }
+        }
+        
         this->initializer_thread.join();
 
 }
