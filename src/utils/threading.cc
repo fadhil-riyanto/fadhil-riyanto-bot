@@ -171,22 +171,24 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(struct
 
 void FadhilRiyanto::threading::thread_queue_runner::thread_queue_cleanup()
 {
+        
         log_info("entering");
 do_again:
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        
         int counter = 0;
         for(int i = 0; i < ring->depth; i++) {
                 log_info("check");
                 if ((ring->queue_list + i)->state != 1)
                         counter++;
-                if (counter == ring->depth)
-                        goto next;
-
-                /* bugnote: jump with counter reset */
-                else
-                        goto do_again;
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                
         }
+        if (counter == ring->depth)
+                goto next;
+
+        /* bugnote: jump with counter reset */
+        else
+                goto do_again;
 next:
         log_info("all thread is dead");
         this->initializer_thread.join();
