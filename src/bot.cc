@@ -127,7 +127,6 @@ int main()
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
 
-        printf("%s\n", "will exec?");
 
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status);
         fadhil_riyanto_bot.bot_show_basic_config();
@@ -135,7 +134,7 @@ int main()
 
         
 
-        // ini_free_mem(&config);
+        ini_free_mem(&config);
         return 0;
 
 }
