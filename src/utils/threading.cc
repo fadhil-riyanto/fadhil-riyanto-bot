@@ -57,23 +57,28 @@ bool FadhilRiyanto::threading::thread_queue::send_queue(struct queue_ring *ring,
 }
 
 
-void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct queue_ring *ring)
+void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct queue_ring *ring, struct ini_config *config)
 {
-        log_info("checking all worker");
-        for(int i = 0; i < depth; i++) {
-                log_debug("qw %d | need_join %s, queue_num %d, state %s", i, 
-                        FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->need_join).c_str(),
-                        (ring->queue_list + i)->queue_num,
-                        FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->state).c_str());
+        if (config->enable_thread_bug_log == true) {
+                log_info("checking all worker");
+                for(int i = 0; i < depth; i++) {
+                        log_debug("qw %d | need_join %s, queue_num %d, state %s", i, 
+                                FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->need_join).c_str(),
+                                (ring->queue_list + i)->queue_num,
+                                FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->state).c_str());
+                }
         }
+
+        
 };
 
 void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(struct queue_ring *ring,
-        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot)
+        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot, struct ini_config *config)
 {
         this->ring = ring;
         this->signal_handler = signal_handler;
         this->bot = bot;
+        this->config = config;
 }
 
 // void FadhilRiyanto::threading::create_event_loop()
@@ -113,16 +118,22 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int
 }
 
 void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring *ring, 
-                        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot)
+                        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot, struct ini_config *config)
 {
         long seen_largest = 0;
+
+        if (config->enable_on_create_thread_event == true) {
+                log_debug("completion queue thread created");
+        }
         
-        log_debug("completion queue thread created");
+        
 
         while(true && *signal_handler != SIGINT) {
                 for(int i = 0; i < ring->depth; i++) {
                         if ((ring->queue_list + i)->queue_num == seen_largest) {
-                                log_debug("create thread %lu", i);
+
+                                if (config->enable_on_create_thread_event)
+                                        log_debug("create thread %lu", i);
 
                                 FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(
                                         i, bot, (ring->queue_list + i)->data, ring, signal_handler
@@ -140,7 +151,7 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
                 }
 
                 /* check thread state */
-                FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(ring, signal_handler);
+                FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(ring, signal_handler, config);
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
@@ -149,21 +160,26 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
 void FadhilRiyanto::threading::thread_queue_runner::create_child_eventloop()
 {
         /* init our separated thread */
-        log_debug("creating thread ...");
-        this->initializer_thread = std::thread(this->eventloop, this->ring, this->signal_handler, this->bot);
+        if (this->config->enable_on_create_thread_event == true) {
+                log_debug("creating listener thread ...");
+        }
+        
+        this->initializer_thread = std::thread(this->eventloop, this->ring, this->signal_handler, this->bot, this->config);
         // std::thread initializer(this->eventloop, this->ring, this->signal_handler, this->bot);
         // return initializer;
 }
 
 void FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(struct queue_ring *ring,
-                                                                        volatile std::sig_atomic_t *signal_handler)
+                                                                        volatile std::sig_atomic_t *signal_handler, struct ini_config *config)
 {
         for(int i = 0; i < ring->depth; i++) {
                 if ((ring->queue_list + i)->need_join == 1 && *signal_handler != SIGINT) {
                         (ring->queue_list + i)->handler_th.join();
                         (ring->queue_list + i)->need_join = 0;
                         (ring->queue_list + i)->queue_num = -1;
-                        log_info("joined thread %d with queue_num %d", i, (ring->queue_list + i)->queue_num);
+
+                        if (config->enable_on_joined_thread_event)
+                                log_info("joined thread %d with queue_num %d", i, (ring->queue_list + i)->queue_num);
                 }
         }
         
@@ -172,13 +188,11 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(struct
 void FadhilRiyanto::threading::thread_queue_runner::thread_queue_cleanup()
 {
         
-        log_info("entering");
 do_again:
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         int counter = 0;
         for(int i = 0; i < ring->depth; i++) {
-                log_info("check");
                 if ((ring->queue_list + i)->state != 1)
                         counter++;
                 
@@ -190,7 +204,7 @@ do_again:
         else
                 goto do_again;
 next:
-        log_info("[EXIT] all thread is dead");
+        log_info("[EXIT] all thread is confirmed dead");
 
         for(int i = 0; i < ring->depth; i++) {
                 if ((ring->queue_list + i)->need_join == 1) {

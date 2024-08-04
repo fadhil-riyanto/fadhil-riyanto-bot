@@ -11,6 +11,7 @@
 #include <csignal>
 #include <tgbot/tgbot.h>
 #include <thread>
+#include "inih_parser.h"
 
 namespace FadhilRiyanto::threading {
 
@@ -40,7 +41,7 @@ struct queue_ring
 
 class thread_helper {
 public:
-        static void queue_debugger(int depth, struct queue_ring *ring);
+        static void queue_debugger(int depth, struct queue_ring *ring, struct ini_config *config);
 };
 
 class thread_queue {
@@ -55,18 +56,21 @@ private:
         struct queue_ring *ring;
         volatile std::sig_atomic_t *signal_handler;
         TgBot::Bot *bot;
+        struct ini_config *config;
 
         std::thread initializer_thread;
 
-        static void thread_zombie_cleaner(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
-        static void eventloop(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot);
+        static void thread_zombie_cleaner(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
+                                                struct ini_config *config);
+        static void eventloop(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot,
+                                struct ini_config *config);
         static void process_msg(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
         static void eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
 public:
         void thread_queue_runner_link(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
-                TgBot::Bot *bot);
+                TgBot::Bot *bot, struct ini_config *config);
         void create_child_eventloop();
         void thread_queue_cleanup();
 };

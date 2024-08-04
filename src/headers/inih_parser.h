@@ -11,9 +11,14 @@
 struct ini_config {
         char*           bot_token;
         bool            enable_all_log;
+        bool            show_startup_ini_config;
         bool            enable_command_debug_log;
         bool            enable_pool_start_log;
         bool            enable_thread_queue_debug;
+        bool            enable_on_create_thread_event;
+        bool            enable_on_joined_thread_event;
+        bool            enable_thread_bug_log;
+        
         char            command_prefix;
         char*           bot_username;
         int             queue_depth;
