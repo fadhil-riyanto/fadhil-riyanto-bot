@@ -19,12 +19,15 @@ private:
         struct ini_config *config;
         volatile std::sig_atomic_t *signal_status;
 
+        static struct FadhilRiyanto::threading::queue_ring ring;
+
 public:
         fadhil_riyanto_bot(struct ini_config* config, volatile std::sig_atomic_t *signal_status);
         void bot_eventloop(void);
         void bot_show_basic_config(void);
         void bot_handle_message(TgBot::Message::Ptr *msg,
                 struct FadhilRiyanto::threading::queue_ring *ring);
+        static void bot_run_cleanup(int sigint);
 };
 
 

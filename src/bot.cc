@@ -21,10 +21,10 @@ namespace
 }
 
 
-// void signal_handler(int signal)
-// {
-//         global_signal_status = signal;
-// }
+void signal_handler(int signal)
+{
+        global_signal_status = signal;
+}
 
 
 FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config, 
@@ -79,18 +79,19 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         FadhilRiyanto::threading::thread_queue::thread_queue_init(this->config->queue_depth, &ring);
 
         FadhilRiyanto::threading::thread_queue_runner th_queue_runner;
-        th_queue_runner.thread_queue_runner_link(&ring, this->signal_status, 
-                                                        &this->bot);
+        th_queue_runner.thread_queue_runner_link(&ring, this->signal_status, &this->bot);
         th_queue_runner.create_child_eventloop();
 
         this->bot.getEvents().onAnyMessage([this, &ring](TgBot::Message::Ptr message) -> void {
                 this->bot_handle_message(&message, &ring);
         });
+
+        this->signal_status = &global_signal_status;
         
         try {
                 
                 TgBot::TgLongPoll longPoll(this->bot);
-                while (true) {
+                while (true && *this->signal_status != SIGINT) {
                         if (this->config->enable_pool_start_log == true) {
                                 log_info("Long poll started");
                         }
@@ -100,17 +101,21 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         } catch (TgBot::TgException& e) {
                 printf("error: %s\n", e.what());
         }
-        *this->signal_status = SIGINT;
-
         
-
         th_queue_runner.thread_queue_cleanup();
         FadhilRiyanto::threading::thread_queue::thread_queue_destroy(&ring);
 }
 
+// void FadhilRiyanto::fadhil_riyanto_bot::bot_run_cleanup(int sigint)
+// {
+//         /* call on sigint signal */
+//         log_warn("got SIGINT, exitting ...");
+//         global_signal_status = SIGINT;
+// }
+
 int main()
 {
-        // std::signal(SIGINT, signal_handler);
+        std::signal(SIGINT, signal_handler);
         struct ini_config config;
 
         if (ini_parse("config.ini", parse_config_cb, &config) < 0) {
