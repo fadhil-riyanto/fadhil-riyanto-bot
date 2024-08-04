@@ -17,13 +17,14 @@
 
 namespace
 {
-    volatile std::sig_atomic_t global_signal_status;
+        volatile std::sig_atomic_t global_signal_status;
 }
 
 
 void signal_handler(int signal)
 {
         global_signal_status = signal;
+        log_info("got sigint");
 }
 
 
