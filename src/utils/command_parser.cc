@@ -6,10 +6,11 @@
  */
 
 #include "../headers/command_parser.h"
-#include <cstdio>
-#include <stdexcept>
 #include <string>
 #include "../../submodule/log.c-patched/src/log.h"
+
+/* external text include */
+#include "../headers/error.h"
 
 namespace FadhilRiyanto::string_utils {
 
@@ -38,7 +39,7 @@ std::tuple<bool, std::string::size_type> command_parser::command_has_value(void)
                         return {true, pos_off};
                 }
         } else {
-                throw std::invalid_argument("not a command");
+                throw FadhilRiyanto::error::not_command();
         }
 }
 
