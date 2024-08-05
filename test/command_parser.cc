@@ -10,6 +10,9 @@
 #include <stdexcept>
 #include <string>
 
+/* external text include */
+#include "../src/headers/error.h"
+
 namespace FadhilRiyanto {
 
 command_parser::command_parser(std::string rawstr, 
@@ -37,7 +40,7 @@ std::tuple<bool, std::string::size_type> command_parser::command_has_value(void)
                         return {true, pos_off};
                 }
         } else {
-                throw std::invalid_argument("not a command");
+                throw FadhilRiyanto::error::not_command();
         }
 }
 
