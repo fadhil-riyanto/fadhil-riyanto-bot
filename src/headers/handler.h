@@ -17,14 +17,15 @@ namespace FadhilRiyanto {
 
 class handler {
 private:
-        TgBot::Message::Ptr *message;
+        TgBot::Message::Ptr *msg;
         TgBot::Bot *bot;
         struct ini_config *config;
         volatile std::sig_atomic_t *signal_status;
         struct ctx *ctx;
+        void classify_input(void);
 
 public:
-        handler(TgBot::Message::Ptr *message, TgBot::Bot *bot, struct ini_config *config,
+        void recv_from_thqueue(TgBot::Message::Ptr *message, TgBot::Bot *bot, struct ini_config *config,
                         volatile std::sig_atomic_t *signal_status, struct ctx *ctx);
         void handle_command_input();
         void handle_text();
