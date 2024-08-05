@@ -14,6 +14,9 @@ test_parse_value:
 test_str2bool:
 	${CC} test_str2bool.cc string_helper.cc -o p ${CCFLAGS}
 
+test_normal:
+	${CC} test_normal.cc command_parser.cc -o p ${CCFLAGS}
+
 	
 clean:
 	rm -rf build
