@@ -3,6 +3,9 @@ LIB = -lTgBot -lboost_system -lssl -lcrypto -lpthread -lfmt
 DEBUGFLAGS = -ggdb3
 OBJDIR = build
 
+exception_list:
+	${CC} src/exception/not_command.cc -c -o ${OBJDIR}/exception_not_command.o ${DEBUGFLAGS}
+
 threading:
 	${CC} src/utils/threading.cc -c -o ${OBJDIR}/utils_threading.o ${DEBUGFLAGS}
 
@@ -25,7 +28,8 @@ int_helper:
 main_bot: 
 	${CC} src/bot.cc -c -o ${OBJDIR}/bot.o ${DEBUGFLAGS}
 
-all_libs: inih_parser main_bot log_c utils_command_parser utils_string_helper threading int_helper
+all_libs: inih_parser main_bot log_c utils_command_parser utils_string_helper threading int_helper\
+		exception_list
 
 all: build/*.o
 	${CC} $^ -o fadhil_riyanto_bot ${LIB}
