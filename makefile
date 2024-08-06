@@ -28,8 +28,11 @@ int_helper:
 main_bot: 
 	${CC} src/bot.cc -c -o ${OBJDIR}/bot.o ${DEBUGFLAGS}
 
+handler: 
+	${CC} src/handler.cc -c -o ${OBJDIR}/handler.o ${DEBUGFLAGS}
+
 all_libs: inih_parser main_bot log_c utils_command_parser utils_string_helper threading int_helper\
-		exception_list
+		exception_list handler
 
 all: build/*.o
 	${CC} $^ -o fadhil_riyanto_bot ${LIB}
