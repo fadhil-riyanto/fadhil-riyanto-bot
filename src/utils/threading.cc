@@ -6,6 +6,7 @@
  */
 
 #include "../headers/threading.h"
+#include "../headers/handler.h"
 #include "../headers/int_helper.h"
 #include "../../submodule/log.c-patched/src/log.h"
 #include <csignal>
@@ -90,11 +91,15 @@ void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx,
                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler)
 {
 
-        std::string res = fmt::format("your message {}!\n", msg->text);
+        // std::string res = fmt::format("your message {}!\n", msg->text);
 
-        bot->getApi().sendMessage(
-                msg->chat->id,
-                res
+        // bot->getApi().sendMessage(
+        //         msg->chat->id,
+        //         res
+        // );
+
+        FadhilRiyanto::fadhil_riyanto_bot::handler handler(
+                &msg, bot, nullptr, signal_handler, nullptr
         );
 
         (ring->queue_list + counter_idx)->need_join = 1;
