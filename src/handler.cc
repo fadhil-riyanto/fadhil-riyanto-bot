@@ -12,8 +12,9 @@
 #include <fmt/core.h>
 #include <tgbot/tgbot.h>
 
-FadhilRiyanto::fadhil_riyanto_bot::handler::handler(TgBot::Message::Ptr *message, TgBot::Bot *bot, struct ini_config *config,
-                        volatile std::sig_atomic_t *signal_status, struct ctx *ctx)
+FadhilRiyanto::fadhil_riyanto_bot::handler::handler(TgBot::Message::Ptr *message, 
+                TgBot::Bot *bot, struct ini_config *config,
+                volatile std::sig_atomic_t *signal_status, struct ctx *ctx)
 {
         this->msg = message;
         this->bot = bot;

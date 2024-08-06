@@ -58,15 +58,18 @@ bool FadhilRiyanto::threading::thread_queue::send_queue(struct queue_ring *ring,
 }
 
 
-void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct queue_ring *ring, struct ini_config *config)
+void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct queue_ring *ring, 
+        struct ini_config *config)
 {
         if (config->enable_thread_bug_log == true) {
                 log_info("checking all worker");
                 for(int i = 0; i < depth; i++) {
                         log_debug("qw %d | need_join %s, queue_num %d, state %s", i, 
-                                FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->need_join).c_str(),
+                                FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->need_join)
+                                        .c_str(),
                                 (ring->queue_list + i)->queue_num,
-                                FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->state).c_str());
+                                FadhilRiyanto::int_utils::int_helper::int2bool2str((ring->queue_list + i)->state)
+                                        .c_str());
                 }
         }
 
@@ -87,8 +90,9 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(str
 //         // while(this->signal_handler == 1)
 // }
 void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx, 
-                TgBot::Bot *bot, TgBot::Message::Ptr msg, 
-                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, struct ini_config *config)
+        TgBot::Bot *bot, TgBot::Message::Ptr msg, struct queue_ring *ring, 
+        volatile std::sig_atomic_t *signal_handler, 
+        struct ini_config *config)
 {
 
         // std::string res = fmt::format("your message {}!\n", msg->text);
@@ -106,10 +110,11 @@ void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx,
         (ring->queue_list + counter_idx)->state = 0;
 }
 
+
 void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int counter_idx, 
-                                                TgBot::Bot *bot, TgBot::Message::Ptr msg, 
-                                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
-                                                struct ini_config *config)
+                TgBot::Bot *bot, TgBot::Message::Ptr msg, 
+                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
+                struct ini_config *config)
 {
         /* setup state */
 
@@ -171,13 +176,18 @@ void FadhilRiyanto::threading::thread_queue_runner::create_child_eventloop()
                 log_debug("creating listener thread ...");
         }
         
-        this->initializer_thread = std::thread(this->eventloop, this->ring, this->signal_handler, this->bot, this->config);
+        this->initializer_thread = std::thread(
+                this->eventloop, this->ring, 
+                this->signal_handler, 
+                this->bot, 
+                this->config
+        );
         // std::thread initializer(this->eventloop, this->ring, this->signal_handler, this->bot);
         // return initializer;
 }
 
 void FadhilRiyanto::threading::thread_queue_runner::thread_zombie_cleaner(struct queue_ring *ring,
-                                                                        volatile std::sig_atomic_t *signal_handler, struct ini_config *config)
+                                        volatile std::sig_atomic_t *signal_handler, struct ini_config *config)
 {
         for(int i = 0; i < ring->depth; i++) {
                 if ((ring->queue_list + i)->need_join == 1 && *signal_handler != SIGINT) {

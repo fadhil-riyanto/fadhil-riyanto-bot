@@ -54,10 +54,18 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
 void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
 {
         struct FadhilRiyanto::threading::queue_ring ring;
-        FadhilRiyanto::threading::thread_queue::thread_queue_init(this->config->queue_depth, &ring);
+        FadhilRiyanto::threading::thread_queue::thread_queue_init(
+                this->config->queue_depth, &ring
+        );
 
         FadhilRiyanto::threading::thread_queue_runner th_queue_runner;
-        th_queue_runner.thread_queue_runner_link(&ring, this->signal_status, &this->bot, this->config);
+        th_queue_runner.thread_queue_runner_link(
+                &ring, 
+                this->signal_status, 
+                &this->bot, 
+                this->config
+        );
+        
         th_queue_runner.create_child_eventloop();
 
         this->bot.getEvents().onAnyMessage([this, &ring](TgBot::Message::Ptr message) -> void {
