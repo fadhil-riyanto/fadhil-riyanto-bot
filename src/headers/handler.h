@@ -8,6 +8,7 @@
 #ifndef HANDLER_H
 #define HANDLER_H
 
+#include "command_parser.h"
 #include <tgbot/tgbot.h>
 #include "inih_parser.h"
 #include "ctx.h"
@@ -27,7 +28,7 @@ private:
 public:
         handler(TgBot::Message::Ptr *message, TgBot::Bot *bot, struct ini_config *config,
                         volatile std::sig_atomic_t *signal_status, struct ctx *ctx);
-        void handle_command_input();
+        void handle_command_input(struct FadhilRiyanto::string_utils::command_parser_result *res);
         void handle_text();
 };
 

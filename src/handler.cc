@@ -8,6 +8,7 @@
 #include "headers/handler.h"
 #include "headers/command_parser.h"
 #include "headers/error.h"
+#include <cstdio>
 #include <fmt/core.h>
 #include <tgbot/tgbot.h>
 
@@ -25,24 +26,29 @@ FadhilRiyanto::fadhil_riyanto_bot::handler::handler(TgBot::Message::Ptr *message
 
 void FadhilRiyanto::fadhil_riyanto_bot::handler::classify_input(void)
 {
+        struct FadhilRiyanto::string_utils::command_parser_result res;
+
         struct FadhilRiyanto::string_utils::command_parser_config parse_config = {
                 .command_prefix = '/',
                 .bot_username = "@fadhil_riyanto_bot"
         };
 
         try {
-                struct FadhilRiyanto::string_utils::command_parser_result res;
-
+                
                 FadhilRiyanto::string_utils::command_parser parser((*this->msg)->text, &parse_config, &res);
              
                 parser.get_raw_command();
                 parser.get_raw_value();
 
                 /* debug enable or not ? */
-                parser.command_parser_debug(true);
+                parser.command_parser_debug(false);
        
         } catch (FadhilRiyanto::error::not_command) {
                 this->handle_text();
+        }
+
+        if (res.my_turn) {
+                this->handle_command_input(&res);
         }
 }
 
@@ -55,4 +61,11 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_text(void)
                 (*this->msg)->chat->id,
                 res
         );
+}
+
+void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_command_input(
+        struct FadhilRiyanto::string_utils::command_parser_result *res
+)
+{
+        printf("detected %s\n", res->command.c_str());
 }
