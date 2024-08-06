@@ -10,7 +10,7 @@ int main()
         };
 
 
-        std::string sample = "/abc info";
+        std::string sample = "abc info";
         struct FadhilRiyanto::command_parser_result res;
 
         FadhilRiyanto::command_parser parser(sample, &parse_config, &res);
@@ -20,4 +20,6 @@ int main()
         } catch (FadhilRiyanto::error::not_command) {
                 printf("input invalid");
         }
+
+        printf("%s\n", res.my_turn == 1 ? "true" : "false");
 }
