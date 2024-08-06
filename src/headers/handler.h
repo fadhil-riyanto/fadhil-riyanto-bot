@@ -13,7 +13,7 @@
 #include "ctx.h"
 #include <csignal>
 
-namespace FadhilRiyanto {
+namespace FadhilRiyanto::fadhil_riyanto_bot {
 
 class handler {
 private:
@@ -25,7 +25,7 @@ private:
         void classify_input(void);
 
 public:
-        void recv_from_thqueue(TgBot::Message::Ptr *message, TgBot::Bot *bot, struct ini_config *config,
+        handler(TgBot::Message::Ptr *message, TgBot::Bot *bot, struct ini_config *config,
                         volatile std::sig_atomic_t *signal_status, struct ctx *ctx);
         void handle_command_input();
         void handle_text();

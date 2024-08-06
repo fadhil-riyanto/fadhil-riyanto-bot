@@ -11,7 +11,7 @@
 #include <fmt/core.h>
 #include <tgbot/tgbot.h>
 
-void FadhilRiyanto::handler::recv_from_thqueue(TgBot::Message::Ptr *message, TgBot::Bot *bot, struct ini_config *config,
+FadhilRiyanto::fadhil_riyanto_bot::handler::handler(TgBot::Message::Ptr *message, TgBot::Bot *bot, struct ini_config *config,
                         volatile std::sig_atomic_t *signal_status, struct ctx *ctx)
 {
         this->msg = message;
@@ -19,40 +19,35 @@ void FadhilRiyanto::handler::recv_from_thqueue(TgBot::Message::Ptr *message, TgB
         this->config = config;
         this->signal_status = signal_status;
         this->ctx = ctx;
+
+        this->classify_input();
 };
 
-void FadhilRiyanto::handler::classify_input(void)
+void FadhilRiyanto::fadhil_riyanto_bot::handler::classify_input(void)
 {
-        struct string_utils::command_parser_config parse_config = {
-                .command_prefix = this->config->command_prefix,
-                .bot_username = this->config->bot_username
+        struct FadhilRiyanto::string_utils::command_parser_config parse_config = {
+                .command_prefix = '/',
+                .bot_username = "@fadhil_riyanto_bot"
         };
 
-        struct string_utils::command_parser_result parse_res;
-
-        string_utils::command_parser parse((*msg)->text, &parse_config, &parse_res);
-        
         try {
-                parse.get_raw_command();
-                parse.get_raw_value();
-                parse.command_parser_debug(this->config->enable_command_debug_log);
+                struct FadhilRiyanto::string_utils::command_parser_result res;
+
+                FadhilRiyanto::string_utils::command_parser parser((*this->msg)->text, &parse_config, &res);
+             
+                parser.get_raw_command();
+                parser.get_raw_value();
+
+                /* debug enable or not ? */
+                parser.command_parser_debug(true);
+       
         } catch (FadhilRiyanto::error::not_command) {
-                /* handle non command message here */
-                /* call normal text handler */
-
                 this->handle_text();
-
-        }
-
-        if (parse_res.my_turn) {
-                
-                this->handle_command_input();
-
-                // this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
         }
 }
 
-void FadhilRiyanto::handler::handle_text()
+
+void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_text(void)
 {
         std::string res = fmt::format("your message is {}!\n", (*this->msg)->text);
 
