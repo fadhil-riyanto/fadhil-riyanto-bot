@@ -88,7 +88,7 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(str
 // }
 void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx, 
                 TgBot::Bot *bot, TgBot::Message::Ptr msg, 
-                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler)
+                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, struct ini_config *config)
 {
 
         // std::string res = fmt::format("your message {}!\n", msg->text);
@@ -99,7 +99,7 @@ void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx,
         // );
 
         FadhilRiyanto::fadhil_riyanto_bot::handler handler(
-                &msg, bot, nullptr, signal_handler, nullptr
+                &msg, bot, config, signal_handler, nullptr
         );
 
         (ring->queue_list + counter_idx)->need_join = 1;
@@ -108,7 +108,8 @@ void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx,
 
 void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int counter_idx, 
                                                 TgBot::Bot *bot, TgBot::Message::Ptr msg, 
-                                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler)
+                                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
+                                                struct ini_config *config)
 {
         /* setup state */
 
@@ -118,7 +119,7 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int
 
         (ring->queue_list + counter_idx)->handler_th = std::thread(
                 FadhilRiyanto::threading::thread_queue_runner::process_msg, 
-                        counter_idx, bot, msg, ring, signal_handler
+                        counter_idx, bot, msg, ring, signal_handler, config
         );
 }
 
@@ -141,7 +142,8 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
                                         log_debug("create thread %lu", i);
 
                                 FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(
-                                        i, bot, (ring->queue_list + i)->data, ring, signal_handler
+                                        i, bot, (ring->queue_list + i)->data, ring, signal_handler,
+                                        config
                                 );
                                 // this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
                                 // std::thread runner

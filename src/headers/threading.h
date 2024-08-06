@@ -65,9 +65,10 @@ private:
         static void eventloop(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot,
                                 struct ini_config *config);
         static void process_msg(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
-                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
+                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, struct ini_config *config);
         static void eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
-                                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler);
+                                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
+                                                struct ini_config *config);
 public:
         void thread_queue_runner_link(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
                 TgBot::Bot *bot, struct ini_config *config);

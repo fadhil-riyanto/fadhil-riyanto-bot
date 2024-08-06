@@ -41,7 +41,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::classify_input(void)
                 parser.get_raw_value();
 
                 /* debug enable or not ? */
-                parser.command_parser_debug(false);
+                parser.command_parser_debug(this->config->enable_command_debug_log);
        
         } catch (FadhilRiyanto::error::not_command) {
                 this->handle_text();
