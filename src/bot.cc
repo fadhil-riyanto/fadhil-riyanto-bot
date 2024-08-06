@@ -13,7 +13,6 @@
 #include "../submodule/inih/ini.h"
 #include "../submodule/log.c-patched/src/log.h"
 #include "headers/bot.h"
-#include "headers/command_parser.h"
 
 namespace
 {
@@ -46,32 +45,10 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
 {
         log_info("%d : %s", (*msg)->chat->id, (*msg)->text.c_str());
 
-        struct string_utils::command_parser_config parse_config = {
-                .command_prefix = this->config->command_prefix,
-                .bot_username = this->config->bot_username
-        };
+        FadhilRiyanto::threading::thread_queue::send_queue(ring, (*msg));
+        FadhilRiyanto::threading::thread_helper::queue_debugger(this->config->queue_depth, ring, this->config);
 
-        struct string_utils::command_parser_result parse_res;
 
-        string_utils::command_parser parse((*msg)->text, &parse_config, &parse_res);
-        
-        try {
-                parse.get_raw_command();
-                parse.get_raw_value();
-                parse.command_parser_debug(this->config->enable_command_debug_log);
-        } catch (std::invalid_argument) {
-                /* handle non command message here */
-        }
-
-        if (parse_res.my_turn) {
-                
-                FadhilRiyanto::threading::thread_queue::send_queue(ring, (*msg));
-                FadhilRiyanto::threading::thread_helper::queue_debugger(this->config->queue_depth, ring, this->config);
-
-                // this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
-        }
-        
-        // 
 }
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
