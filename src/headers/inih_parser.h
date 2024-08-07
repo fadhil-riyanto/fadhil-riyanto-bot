@@ -8,6 +8,8 @@
 #ifndef INIH_PARSER_H
 #define INIH_PARSER_H
 
+#include "../internal_config.h"
+
 struct ini_config {
         char*           bot_token;
         bool            enable_all_log;
@@ -23,6 +25,8 @@ struct ini_config {
         char*           bot_username;
         int             queue_depth;
         int             queue_eventloop_sleep_ms;
+
+        int             module[bot_module_N];
 };
 
 int parse_config_cb(void* user, const char* section, const char* name,
@@ -30,5 +34,7 @@ int parse_config_cb(void* user, const char* section, const char* name,
 
 void ini_free_mem(struct ini_config *config);
 void ini_show_config(struct ini_config *config);
+
+int ini_load_config(const char *filename, struct ini_config* config);
 
 #endif

@@ -11,6 +11,9 @@
 #include "headers/inih_parser.h"
 #include "headers/string_helper.h"
 #include "../submodule/log.c-patched/src/log.h"
+#include "../submodule/inih/ini.h"
+
+int counter = 0;
 
 int parse_config_cb(void* user, const char* section, const char* name,
                                 const char* value)
@@ -98,4 +101,15 @@ void ini_show_config(struct ini_config *config)
         
         
         
+}
+
+
+int ini_load_config(const char *filename, struct ini_config* config)
+{
+        if (ini_parse(filename, parse_config_cb, config) < 0) {
+                log_fatal("%s", "Can't load config.ini \n");
+                ini_free_mem(config);
+                return -1;
+        }
+        return 0;
 }

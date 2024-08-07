@@ -10,7 +10,6 @@
 #include <tgbot/tgbot.h>
 #include "headers/inih_parser.h"
 #include "headers/threading.h"
-#include "../submodule/inih/ini.h"
 #include "../submodule/log.c-patched/src/log.h"
 #include "headers/bot.h"
 
@@ -104,11 +103,12 @@ int main()
         std::signal(SIGINT, signal_handler);
         struct ini_config config;
 
-        if (ini_parse("config.ini", parse_config_cb, &config) < 0) {
-                log_fatal("%s", "Can't load config.ini \n");
-                ini_free_mem(&config);
-                return -1;
-        }
+        // if (ini_parse("config.ini", parse_config_cb, &config) < 0) {
+        //         log_fatal("%s", "Can't load config.ini \n");
+        //         ini_free_mem(&config);
+        //         return -1;
+        // }
+        ini_load_config("config.ini", &config);
 
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
