@@ -78,7 +78,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_command_input(
                 this->bot, 
                 (*this->msg), 
                 this->config, 
-                this->ctx,
+                nullptr, /* this is reserved */
                 &this->res
         );
 
