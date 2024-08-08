@@ -12,8 +12,6 @@
 #include "headers/threading.h"
 #include "../submodule/log.c-patched/src/log.h"
 #include "headers/bot.h"
-#include "headers/shared_lib_loader.h"
-#include "internal_config.h"
 
 namespace
 {
@@ -104,7 +102,7 @@ int main()
 {
         std::signal(SIGINT, signal_handler);
         struct ini_config config;
-        struct FadhilRiyanto::dlsys::loaded_libs loaded_libs;
+        // struct FadhilRiyanto::dlsys::loaded_libs loaded_libs;
         
 
         // if (ini_parse("config.ini", parse_config_cb, &config) < 0) {
@@ -117,11 +115,11 @@ int main()
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
 
-        FadhilRiyanto::dlsys::shared_lib_loader::config_module_load(
-                config.module, 
-                &loaded_libs, 
-                bot_module_N
-        );
+        // FadhilRiyanto::dlsys::shared_lib_loader::config_module_load(
+        //         config.module, 
+        //         &loaded_libs, 
+        //         bot_module_N
+        // );
 
 
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status);
@@ -130,7 +128,7 @@ int main()
         fadhil_riyanto_bot.bot_show_basic_config();
         fadhil_riyanto_bot.bot_eventloop();
 
-        FadhilRiyanto::dlsys::shared_lib_loader::close_all_lib(&loaded_libs);
+        // FadhilRiyanto::dlsys::shared_lib_loader::close_all_lib(&loaded_libs);
 
         ini_free_mem(&config);
         return 0;
