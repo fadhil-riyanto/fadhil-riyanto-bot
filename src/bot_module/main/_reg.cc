@@ -1,39 +1,33 @@
-#include "../../headers/base_module.h"
+#include "../../headers/command_parser.h"
 #include "../../headers/ctx.h"
 #include <tgbot/tgbot.h>
 #include <string>
 #include <fmt/core.h>
+#include <stdio.h>
 
-namespace FadhilRiyanto::mod {
+/* local */
+#include "headers/_reg.h"
 
-class module_start : public base_module {
-        TgBot::Bot *bot;
-        TgBot::Message::Ptr msg;
-        struct ini_config *config;
-        struct ctx *ctx;
+int module_main::module_init(TgBot::Bot *bot, TgBot::Message::Ptr msg, 
+                                struct ini_config *config, struct ctx *ctx,
+                                struct FadhilRiyanto::string_utils::command_parser_result *res)
+{
+        this->bot = bot;
+        this->msg = msg;
+        this->config = config;
+        this->ctx = ctx;
+        
+        this->module_next(res->command);
+        return 0; /* temp return */
+}
 
-        int module_init(TgBot::Bot *bot, TgBot::Message::Ptr msg, 
-                                        struct ini_config *config, struct ctx *ctx)
-        {
-                this->bot = bot;
-                this->msg = msg;
-                this->config = config;
-                this->ctx = ctx;
-                
-                return 0; /* temp return */
+int module_main::module_next(std::string input)
+{
+
+        printf("module called \"%s\"\n", input.c_str());
+        if (!input.compare("/start")) {
+                fmt::print("command called\n");
         }
 
-        int module_next(std::string input)
-        {
-                if (!input.compare("/start")) {
-                        fmt::print("command called");
-                }
-
-                return 0;
-        }
-
-
-
-};
-
+        return 0;
 }
