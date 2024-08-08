@@ -23,6 +23,8 @@ private:
         struct ini_config *config;
         volatile std::sig_atomic_t *signal_status;
         struct ctx *ctx;
+        struct FadhilRiyanto::string_utils::command_parser_result res;
+
         void classify_input(void);
 
 public:
