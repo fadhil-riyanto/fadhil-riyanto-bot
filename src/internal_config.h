@@ -9,6 +9,6 @@
 #ifndef INTERNAL_CONFIG_H
 #define INTERNAL_CONFIG_H
 
-#define bot_module_N 2
+#define bot_module_N 1
 
 #endif
