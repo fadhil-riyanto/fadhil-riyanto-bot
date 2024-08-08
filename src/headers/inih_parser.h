@@ -26,7 +26,7 @@ struct ini_config {
         int             queue_depth;
         int             queue_eventloop_sleep_ms;
 
-        int             module[bot_module_N];
+        char*           module[bot_module_N];
 };
 
 int parse_config_cb(void* user, const char* section, const char* name,

@@ -12,6 +12,7 @@
 #include "headers/string_helper.h"
 #include "../submodule/log.c-patched/src/log.h"
 #include "../submodule/inih/ini.h"
+#include "internal_config.h"
 
 int counter = 0;
 
@@ -65,6 +66,9 @@ int parse_config_cb(void* user, const char* section, const char* name,
                 config->queue_depth = atoi(value);
         }  else if (MATCH("RUNTIME", "queue_eventloop_sleep_ms")) {
                 config->queue_eventloop_sleep_ms = atoi(value);
+        } else if (MATCH("MODULE", "module")) {
+                config->module[counter] = strdup(value);
+                counter++;
         } else {
                 return 0;
         }
@@ -76,6 +80,10 @@ void ini_free_mem(struct ini_config *config)
 {
         free(config->bot_token);
         free(config->bot_username);
+
+        for(int i = 0; i < bot_module_N; i++) {
+                free(config->module[i]);
+        }
 }
 
 void ini_show_config(struct ini_config *config)
@@ -97,6 +105,11 @@ void ini_show_config(struct ini_config *config)
                 log_info("config loaded \"[RUNTIME] queue_depth\" = \"%d\"", config->queue_depth);
                 log_info("config loaded \"[RUNTIME] queue_eventloop_sleep_ms\" = \"%d\"", config->queue_eventloop_sleep_ms);
                 
+
+                /* show current installed modules */
+                for(int i = 0; i < bot_module_N; i++) {
+                        log_info("config loaded \"[MODULE] %s", config->module[i]);
+                }
         }
         
         
