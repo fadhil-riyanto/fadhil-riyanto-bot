@@ -12,6 +12,10 @@
 #include <fmt/core.h>
 #include <tgbot/tgbot.h>
 
+/* module headers start */
+#include "bot_module/main/headers/_reg.h"
+/* module headers end */
+
 FadhilRiyanto::fadhil_riyanto_bot::handler::handler(TgBot::Message::Ptr *message, 
                 TgBot::Bot *bot, struct ini_config *config,
                 volatile std::sig_atomic_t *signal_status, struct ctx *ctx)
@@ -27,7 +31,7 @@ FadhilRiyanto::fadhil_riyanto_bot::handler::handler(TgBot::Message::Ptr *message
 
 void FadhilRiyanto::fadhil_riyanto_bot::handler::classify_input(void)
 {
-        struct FadhilRiyanto::string_utils::command_parser_result res;
+        // struct FadhilRiyanto::string_utils::command_parser_result res;
 
         struct FadhilRiyanto::string_utils::command_parser_config parse_config = {
                 .command_prefix = '/',
@@ -36,7 +40,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::classify_input(void)
 
         try {
                 
-                FadhilRiyanto::string_utils::command_parser parser((*this->msg)->text, &parse_config, &res);
+                FadhilRiyanto::string_utils::command_parser parser((*this->msg)->text, &parse_config, &this->res);
              
                 parser.get_raw_command();
                 parser.get_raw_value();
@@ -68,5 +72,15 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_command_input(
         struct FadhilRiyanto::string_utils::command_parser_result *res
 )
 {
-        printf("detected %s\n", res->command.c_str());
+        /* main handler start */
+        module_main module_main;
+        module_main.module_init(
+                this->bot, 
+                (*this->msg), 
+                this->config, 
+                this->ctx,
+                &this->res
+        );
+
+
 }
