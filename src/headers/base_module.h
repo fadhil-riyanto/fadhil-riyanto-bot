@@ -11,6 +11,7 @@
 #include "ctx.h"
 #include <tgbot/tgbot.h>
 #include <string>
+#include "command_parser.h"
 
 /* bot_module abstract class */
 
@@ -24,7 +25,8 @@ private:
         struct ctx *ctx;
 public:
         virtual int module_init(TgBot::Bot *bot, TgBot::Message::Ptr msg, 
-                                struct ini_config *config, struct ctx *ctx) = 0;
+                struct ini_config *config, struct ctx *ctx,
+                struct FadhilRiyanto::string_utils::command_parser_result *res) = 0;
 
         /* return found or not */
         virtual int module_next(std::string input) = 0;
