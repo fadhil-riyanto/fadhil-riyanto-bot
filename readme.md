@@ -12,14 +12,16 @@ personal assistant telegram bot
 - [inih](https://github.com/benhoyt/inih) (submodule)
 - [googletest](https://github.com/google/googletest) (test)
 
-## build
-currenly, supported platform only linux.
+## build instructions
+currenly, supported platform only linux. I have no plans to make a windows version.
+
+make sure all dependencies are installed, and you need several GB of ram.
 
 1. ```git clone https://github.com/fadhil-riyanto/fadhil-riyanto-bot.git```
 
 2. ```cd fadhil-riyanto-bot```
 2. ```git submodule update --init --recursive --depth 1```
-3. ```make all_libs -j{nproc} && make all -j{nproc}```
+3. ```make all_libs -j{nproc} && make all -j{nproc}``` where nproc is your cpu core
 
 
 ## Licence
