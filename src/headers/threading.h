@@ -12,6 +12,7 @@
 #include <tgbot/tgbot.h>
 #include <thread>
 #include "inih_parser.h"
+#include "ctx.h"
 
 namespace FadhilRiyanto::threading {
 
@@ -57,21 +58,23 @@ private:
         volatile std::sig_atomic_t *signal_handler;
         TgBot::Bot *bot;
         struct ini_config *config;
+        struct ctx *ctx;
 
         std::thread initializer_thread;
 
         static void thread_zombie_cleaner(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
                                                 struct ini_config *config);
         static void eventloop(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot,
-                                struct ini_config *config);
+                                struct ini_config *config, struct ctx *ctx);
         static void process_msg(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
-                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, struct ini_config *config);
+                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, 
+                                struct ini_config *config, struct ctx *ctx);
         static void eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
-                                                struct ini_config *config);
+                                                struct ini_config *config, struct ctx *ctx);
 public:
         void thread_queue_runner_link(struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
-                TgBot::Bot *bot, struct ini_config *config);
+                TgBot::Bot *bot, struct ini_config *config, struct ctx *ctx);
         void create_child_eventloop();
         void thread_queue_cleanup();
 };

@@ -6,6 +6,7 @@
  */
 
 #include "../../headers/command_parser.h"
+#include "../../headers/debug.h"
 #include "../../headers/ctx.h"
 #include <tgbot/tgbot.h>
 #include <string>
@@ -30,8 +31,9 @@ int module_main::module_init(TgBot::Bot *bot, TgBot::Message::Ptr msg,
 
 int module_main::module_next(std::string input)
 {
-
+        DSHOW_ADDR(this->ctx->reserved);
         printf("module called \"%s\"\n", input.c_str());
+
         if (!input.compare("/start")) {
                 fmt::print("command called\n");
         }

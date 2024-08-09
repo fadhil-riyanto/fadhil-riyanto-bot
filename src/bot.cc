@@ -30,8 +30,9 @@ void signal_handler(int signal)
 
 
 FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config, 
-        volatile std::sig_atomic_t *signal_status) : bot(config->bot_token)
+        volatile std::sig_atomic_t *signal_status, struct ctx *ctx) : bot(config->bot_token)
 {
+        this->ctx = ctx;
         this->config = config;
         this->signal_status = signal_status;
 }
@@ -65,7 +66,8 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
                 &ring, 
                 this->signal_status, 
                 &this->bot, 
-                this->config
+                this->config,
+                this->ctx
         );
         
         th_queue_runner.create_child_eventloop();
@@ -132,7 +134,7 @@ int main()
         // );
 
 
-        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status);
+        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx);
         
         try {
                 /* devnote: remove */

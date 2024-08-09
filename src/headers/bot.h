@@ -14,6 +14,7 @@
 #define BOT_H
 
 #include <csignal>
+#include "ctx.h"
 
 namespace FadhilRiyanto {
 
@@ -24,12 +25,14 @@ private:
 
         TgBot::Bot bot;
         struct ini_config *config;
+        struct ctx *ctx;
         volatile std::sig_atomic_t *signal_status;
 
         static struct FadhilRiyanto::threading::queue_ring ring;
 
 public:
-        fadhil_riyanto_bot(struct ini_config* config, volatile std::sig_atomic_t *signal_status);
+        fadhil_riyanto_bot(struct ini_config* config, volatile std::sig_atomic_t *signal_status,
+                                struct ctx *ctx);
         void bot_eventloop(void);
         void bot_show_basic_config(void);
         void bot_handle_message(TgBot::Message::Ptr *msg,

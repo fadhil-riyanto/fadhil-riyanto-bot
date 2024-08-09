@@ -8,6 +8,8 @@
 #include "../headers/threading.h"
 #include "../headers/handler.h"
 #include "../headers/int_helper.h"
+#include "../headers/debug.h"
+#include "../headers/ctx.h"
 #include "../../submodule/log.c-patched/src/log.h"
 #include <csignal>
 #include <cstdio>
@@ -77,12 +79,14 @@ void FadhilRiyanto::threading::thread_helper::queue_debugger(int depth, struct q
 };
 
 void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(struct queue_ring *ring,
-        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot, struct ini_config *config)
+        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot, struct ini_config *config,
+        struct ctx *ctx)
 {
         this->ring = ring;
         this->signal_handler = signal_handler;
         this->bot = bot;
         this->config = config;
+        this->ctx = ctx;
 }
 
 // void FadhilRiyanto::threading::create_event_loop()
@@ -92,7 +96,7 @@ void FadhilRiyanto::threading::thread_queue_runner::thread_queue_runner_link(str
 void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx, 
         TgBot::Bot *bot, TgBot::Message::Ptr msg, struct queue_ring *ring, 
         volatile std::sig_atomic_t *signal_handler, 
-        struct ini_config *config)
+        struct ini_config *config, struct ctx *ctx)
 {
 
         // std::string res = fmt::format("your message {}!\n", msg->text);
@@ -103,7 +107,7 @@ void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx,
         // );
 
         FadhilRiyanto::fadhil_riyanto_bot::handler handler(
-                &msg, bot, config, signal_handler, nullptr
+                &msg, bot, config, signal_handler, ctx
         );
 
         (ring->queue_list + counter_idx)->need_join = 1;
@@ -114,7 +118,7 @@ void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx,
 void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int counter_idx, 
                 TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
-                struct ini_config *config)
+                struct ini_config *config, struct ctx *ctx)
 {
         /* setup state */
 
@@ -124,12 +128,15 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int
 
         (ring->queue_list + counter_idx)->handler_th = std::thread(
                 FadhilRiyanto::threading::thread_queue_runner::process_msg, 
-                        counter_idx, bot, msg, ring, signal_handler, config
+                        counter_idx, bot, msg, ring, signal_handler, config, ctx
         );
+
+        DSHOW_ADDR(ctx->reserved);
 }
 
 void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring *ring, 
-                        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot, struct ini_config *config)
+                        volatile std::sig_atomic_t *signal_handler, TgBot::Bot *bot, 
+                        struct ini_config *config, struct ctx *ctx)
 {
         long seen_largest = 0;
 
@@ -137,7 +144,7 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
                 log_debug("completion queue thread created");
         }
         
-        
+        // DSHOW_ADDR(ctx->reserved);
 
         while(true && *signal_handler != SIGINT) {
                 for(int i = 0; i < ring->depth; i++) {
@@ -148,7 +155,7 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
 
                                 FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(
                                         i, bot, (ring->queue_list + i)->data, ring, signal_handler,
-                                        config
+                                        config, ctx
                                 );
                                 // this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
                                 // std::thread runner
@@ -175,12 +182,15 @@ void FadhilRiyanto::threading::thread_queue_runner::create_child_eventloop()
         if (this->config->enable_on_create_thread_event == true) {
                 log_debug("creating listener thread ...");
         }
+
+        /* DSHOW_ADDR(this->ctx->reserved); */
         
         this->initializer_thread = std::thread(
                 this->eventloop, this->ring, 
                 this->signal_handler, 
                 this->bot, 
-                this->config
+                this->config,
+                this->ctx
         );
         // std::thread initializer(this->eventloop, this->ring, this->signal_handler, this->bot);
         // return initializer;
