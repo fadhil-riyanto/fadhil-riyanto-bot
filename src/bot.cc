@@ -6,6 +6,7 @@
  */
 
 #include <csignal>
+#include <fmt/core.h>
 #include <stdio.h>
 #include <tgbot/tgbot.h>
 #include "headers/inih_parser.h"
@@ -124,9 +125,14 @@ int main()
 
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status);
         
-        /* devnote: remove */
-        fadhil_riyanto_bot.bot_show_basic_config();
-        fadhil_riyanto_bot.bot_eventloop();
+        try {
+                /* devnote: remove */
+                fadhil_riyanto_bot.bot_show_basic_config();
+                fadhil_riyanto_bot.bot_eventloop();
+        } catch (boost::wrapexcept<boost::system::system_error>) {
+                log_fatal("network error");
+        }
+        
 
         // FadhilRiyanto::dlsys::shared_lib_loader::close_all_lib(&loaded_libs);
 
