@@ -13,6 +13,8 @@
 #include "headers/threading.h"
 #include "../submodule/log.c-patched/src/log.h"
 #include "headers/bot.h"
+#include "headers/ctx.h"
+#include "headers/debug.h"
 
 namespace
 {
@@ -103,6 +105,8 @@ int main()
 {
         std::signal(SIGINT, signal_handler);
         struct ini_config config;
+
+
         // struct FadhilRiyanto::dlsys::loaded_libs loaded_libs;
         
 
@@ -115,6 +119,11 @@ int main()
 
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
+
+        /* initializer reserved space here */
+        struct ctx ctx;
+        ctx.reserved = 10;
+        DSHOW_ADDR(ctx.reserved);
 
         // FadhilRiyanto::dlsys::shared_lib_loader::config_module_load(
         //         config.module, 
