@@ -6,17 +6,22 @@
  */
 
 #include <csignal>
+#include <cstddef>
 #include <fmt/core.h>
 #include <memory>
 #include <stdio.h>
+#include <tgbot/net/HttpClient.h>
 #include <tgbot/tgbot.h>
 #include <tgbot/types/ReplyParameters.h>
+#include <tgbot/net/CurlHttpClient.h>
 #include "headers/inih_parser.h"
 #include "headers/threading.h"
 #include "../submodule/log.c-patched/src/log.h"
 #include "headers/bot.h"
 #include "headers/ctx.h"
 #include "headers/debug.h"
+
+#define HAVE_CURL
 
 namespace
 {
@@ -32,7 +37,7 @@ void signal_handler(int signal)
 
 
 FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config, 
-        volatile std::sig_atomic_t *signal_status, struct ctx *ctx) : bot(config->bot_token)
+        volatile std::sig_atomic_t *signal_status, struct ctx *ctx, const TgBot::HttpClient &httpClient) : bot(config->bot_token, "http://127.0.0.1:8081", httpClient)
 {
         this->ctx = ctx;
         this->config = config;
@@ -54,9 +59,9 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
         this->bot_handle_queue_overflow(msg);
 
         ret = FadhilRiyanto::threading::thread_queue::send_queue(ring, (*msg));
-        // if (ret == false) {
-
-        // }
+        if (ret == false) {
+                
+        }
         FadhilRiyanto::threading::thread_helper::queue_debugger(this->config->queue_depth, ring, this->config);
 
 
@@ -104,9 +109,13 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         FadhilRiyanto::threading::thread_queue::thread_queue_destroy(&ring);
 }
 
-void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message::Ptr *msg)
+/* note: vg_err uninitialized value L109 */
+void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message::Ptr *msg = NULL)
 {       
-        TgBot::ReplyParameters::Ptr replyParam(new TgBot::ReplyParameters);
+        TgBot::ReplyParameters *ctxptr = new TgBot::ReplyParameters();
+
+        TgBot::ReplyParameters::Ptr replyParam(ctxptr);
+        
         replyParam->messageId = (*msg)->messageId;
         replyParam->chatId = (*msg)->chat->id;
 
@@ -124,6 +133,9 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message
 //         log_warn("got SIGINT, exitting ...");
 //         global_signal_status = SIGINT;
 // }
+
+
+
 
 int main()
 {
@@ -154,16 +166,18 @@ int main()
         //         &loaded_libs, 
         //         bot_module_N
         // );
+        TgBot::CurlHttpClient curlHttpClient;
+        
 
-
-        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx);
+        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx,
+                curlHttpClient);
         
         try {
                 /* devnote: remove */
                 fadhil_riyanto_bot.bot_show_basic_config();
                 fadhil_riyanto_bot.bot_eventloop();
-        } catch (boost::wrapexcept<boost::system::system_error>) {
-                log_fatal("network error");
+        } catch (boost::wrapexcept<boost::system::system_error> e) {
+                log_fatal("network error %s", e.what());
         }
         
 
