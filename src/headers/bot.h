@@ -38,6 +38,7 @@ public:
         void bot_handle_message(TgBot::Message::Ptr *msg,
                 struct FadhilRiyanto::threading::queue_ring *ring);
         static void bot_run_cleanup(int sigint);
+        void bot_handle_queue_overflow(TgBot::Message::Ptr *msg);
 };
 
 

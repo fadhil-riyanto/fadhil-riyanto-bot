@@ -7,8 +7,10 @@
 
 #include <csignal>
 #include <fmt/core.h>
+#include <memory>
 #include <stdio.h>
 #include <tgbot/tgbot.h>
+#include <tgbot/types/ReplyParameters.h>
 #include "headers/inih_parser.h"
 #include "headers/threading.h"
 #include "../submodule/log.c-patched/src/log.h"
@@ -46,9 +48,15 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
 void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *msg, 
         struct FadhilRiyanto::threading::queue_ring *ring)
 {
-        log_info("%d : %s", (*msg)->chat->id, (*msg)->text.c_str());
+        bool ret;
 
-        FadhilRiyanto::threading::thread_queue::send_queue(ring, (*msg));
+        log_info("%d : %s", (*msg)->chat->id, (*msg)->text.c_str());
+        this->bot_handle_queue_overflow(msg);
+
+        ret = FadhilRiyanto::threading::thread_queue::send_queue(ring, (*msg));
+        // if (ret == false) {
+
+        // }
         FadhilRiyanto::threading::thread_helper::queue_debugger(this->config->queue_depth, ring, this->config);
 
 
@@ -94,6 +102,20 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         
         th_queue_runner.thread_queue_cleanup();
         FadhilRiyanto::threading::thread_queue::thread_queue_destroy(&ring);
+}
+
+void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message::Ptr *msg)
+{       
+        TgBot::ReplyParameters::Ptr replyParam(new TgBot::ReplyParameters);
+        replyParam->messageId = (*msg)->messageId;
+        replyParam->chatId = (*msg)->chat->id;
+
+        this->bot.getApi().sendMessage(
+                (*msg)->chat->id, 
+                "server overloaded, try increasing 'queue_depth' at config.ini runtime section",
+                nullptr, 
+                replyParam
+        );
 }
 
 // void FadhilRiyanto::fadhil_riyanto_bot::bot_run_cleanup(int sigint)

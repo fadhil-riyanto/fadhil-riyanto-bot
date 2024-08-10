@@ -42,5 +42,5 @@ module_main:
 all_libs: inih_parser main_bot log_c utils_command_parser utils_string_helper threading int_helper\
 		exception_list handler shared_lib_loader module_main
 
-all: build/*.o
+link: build/*.o
 	${CC} $^ -o fadhil_riyanto_bot ${LIB}
