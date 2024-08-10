@@ -39,7 +39,25 @@ make -j4
 sudo make install
 ```
 
-### 3. build the bot
+### 3. build telegram-bot-api server
+this server make your bot fast than default api.telegram.org
+
+```
+git clone --recursive https://github.com/tdlib/telegram-bot-api.git
+cd telegram-bot-api
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake --build . --target install
+```
+
+start the service, you need api_id and api_hash from https://my.telegram.org/
+
+```
+telegram-bot-api --api-id=YOUR_API_ID --api-hash=YOUR_API_HASH --local --http-ip-address=127.0.0.1
+```
+
+### 4. build the bot
 
 ```
 git clone https://github.com/fadhil-riyanto/fadhil-riyanto-bot.git
@@ -49,6 +67,9 @@ git submodule update --init --recursive --depth 1
 make all_libs -j4 && make all -j4
 ```
 
-
 ## Licence
 license: [GPL-3.0](https://github.com/fadhil-riyanto/fadhil-riyanto-bot/blob/master/license)
+
+
+## Maintainer
+Fadhil Riyanto
