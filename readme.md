@@ -7,7 +7,7 @@ personal assistant telegram bot
 - OpenSSL
 - [fmt](https://github.com/fmtlib/fmt)
 - Zlib
-- CUrl
+- cURL
 - [log.c](https://github.com/fadhil-riyanto/log.c-patched) (submodule)
 - [inih](https://github.com/benhoyt/inih) (submodule)
 - [googletest](https://github.com/google/googletest) (test)
@@ -15,13 +15,39 @@ personal assistant telegram bot
 ## build instructions
 currenly, supported platform only linux. I have no plans to make a windows version.
 
-make sure all dependencies are installed, and you need several GB of ram.
+make sure all dependencies are installed, and you need <b>several GB</b> of ram.
 
-1. ```git clone https://github.com/fadhil-riyanto/fadhil-riyanto-bot.git```
+### 1. Install dependencies
 
-2. ```cd fadhil-riyanto-bot```
-2. ```git submodule update --init --recursive --depth 1```
-3. ```make all_libs -j{nproc} && make all -j{nproc}``` where nproc is your cpu core
+pacman
+```
+sudo pacman -Syu
+sudo pacman -S cmake boost openssl zlib curl fmt
+```
+
+optional (testing)
+```
+sudo pacman -S gtest
+```
+
+### 2. build tgbot-cpp from source
+```
+git clone https://github.com/fadhil-riyanto/tgbot-cpp
+cd tgbot-cpp
+cmake .
+make -j4
+sudo make install
+```
+
+### 3. build the bot
+
+```
+git clone https://github.com/fadhil-riyanto/fadhil-riyanto-bot.git
+
+cd fadhil-riyanto-bot
+git submodule update --init --recursive --depth 1
+make all_libs -j4 && make all -j4
+```
 
 
 ## Licence
