@@ -1,5 +1,5 @@
 CC = g++
-LIB = -lTgBot -lboost_system -lssl -lcrypto -lpthread -lfmt
+LIB = -lTgBot -lboost_system -lssl -lcrypto -lpthread -lfmt -lcurl
 DEBUGFLAGS = -ggdb3
 OBJDIR = build
 
@@ -26,7 +26,7 @@ int_helper:
 	${CC} src/utils/int_helper.cc -c -o ${OBJDIR}/int_helper.o ${DEBUGFLAGS}
 
 main_bot: 
-	${CC} src/bot.cc -c -o ${OBJDIR}/bot.o ${DEBUGFLAGS}
+	${CC} src/bot.cc -c -o ${OBJDIR}/bot.o ${DEBUGFLAGS} -DHAVE_CURL
 
 shared_lib_loader: 
 	${CC} src/shared_lib_loader.cc -c -o ${OBJDIR}/shared_lib_loader.o ${DEBUGFLAGS}
