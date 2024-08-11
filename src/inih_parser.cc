@@ -62,6 +62,10 @@ int parse_config_cb(void* user, const char* section, const char* name,
                 char* tmpptr = strdup(value);
                 config->enable_thread_bug_log = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
                 free(tmpptr);
+        } else if (MATCH("DEBUG", "enable_log_when_module_called")) {
+                char* tmpptr = strdup(value);
+                config->enable_log_when_module_called = FadhilRiyanto::string_utils::string_helper::str2bool(tmpptr);
+                free(tmpptr);
         } else if (MATCH("RUNTIME", "queue_depth")) {
                 config->queue_depth = atoi(value);
         }  else if (MATCH("RUNTIME", "queue_eventloop_sleep_ms")) {
