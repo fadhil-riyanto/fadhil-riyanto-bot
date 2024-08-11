@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <fmt/core.h>
 #include <tgbot/tgbot.h>
+#include "../submodule/log.c-patched/src/log.h"
 
 /* module headers start */
 #include "bot_module/main/headers/_reg.h"
@@ -72,15 +73,23 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_command_input(
         struct FadhilRiyanto::string_utils::command_parser_result *res
 )
 {
+        int ret = 0;
+
         /* main handler start */
         module_main module_main;
-        module_main.module_init(
+        ret = module_main.module_init(
                 this->bot, 
                 (*this->msg), 
                 this->config, 
                 this->ctx, /* this is reserved */
                 &this->res
         );
+
+        if (ret == 0) {
+                if (this->config->enable_log_when_module_called) {
+                        log_debug("successfully executed command %s", res->command.c_str());
+                }
+        }
 
 
 }
