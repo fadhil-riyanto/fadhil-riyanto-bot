@@ -21,8 +21,6 @@
 #include "headers/ctx.h"
 #include "headers/debug.h"
 
-#define HAVE_CURL
-
 namespace
 {
         volatile std::sig_atomic_t global_signal_status;
@@ -56,11 +54,10 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
         bool ret;
 
         log_info("%d : %s", (*msg)->chat->id, (*msg)->text.c_str());
-        this->bot_handle_queue_overflow(msg);
-
+        
         ret = FadhilRiyanto::threading::thread_queue::send_queue(ring, (*msg));
         if (ret == false) {
-                
+                this->bot_handle_queue_overflow(msg);
         }
         FadhilRiyanto::threading::thread_helper::queue_debugger(this->config->queue_depth, ring, this->config);
 
