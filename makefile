@@ -34,13 +34,13 @@ shared_lib_loader:
 handler: 
 	${CC} src/handler.cc -c -o ${OBJDIR}/handler.o ${DEBUGFLAGS}
 
-# /* module makefile */	
-module_main:
-	${CC} src/bot_module/main/start.cc -c -o ${OBJDIR}/mod_main_start.o ${DEBUGFLAGS}
-	${CC} src/bot_module/main/_reg.cc -c -o ${OBJDIR}/mod_main_reg.o ${DEBUGFLAGS}
-
 all_libs: inih_parser main_bot log_c utils_command_parser utils_string_helper threading int_helper\
-		exception_list handler shared_lib_loader module_main
+		exception_list handler shared_lib_loader
+
+all_module:
+	cd src/bot_module/main && $(MAKE) module_main
 
 link: build/*.o
 	${CC} $^ -o fadhil_riyanto_bot ${LIB}
+
+all: all_libs all_module link
