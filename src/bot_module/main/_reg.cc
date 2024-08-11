@@ -8,6 +8,8 @@
 #include "../../headers/command_parser.h"
 #include "../../headers/debug.h"
 #include "../../headers/ctx.h"
+#include "../../headers/inih_parser.h"
+#include "../../../submodule/log.c-patched/src/log.h"
 #include <tgbot/tgbot.h>
 #include <string>
 #include <fmt/core.h>
@@ -26,21 +28,17 @@ int module_main::module_init(TgBot::Bot *bot, TgBot::Message::Ptr msg,
         this->config = config;
         this->ctx = ctx;
         
-        this->module_next(res->command);
-        return 0; /* temp return */
+        return this->module_next(res->command);
 }
 
 int module_main::module_next(std::string input)
 {
-        DSHOW_ADDR(this->ctx->reserved);
-        printf("module called \"%s\"\n", input.c_str());
-
         if (!input.compare("/start")) {
                 // fmt::print("command called\n");
                 FadhilRiyanto::mod::command::start_command start_command;
                 start_command.call(this->bot, "ini input", this->msg);
-                start_command.run_entry();
+                return start_command.run_entry();
         }
 
-        return 0;
+        return -1;
 }
