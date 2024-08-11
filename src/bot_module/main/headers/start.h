@@ -20,7 +20,7 @@ private:
         TgBot::Message::Ptr msg;
 public:
         void call(TgBot::Bot *bot, std::string value, TgBot::Message::Ptr msg);
-        void run_entry();
+        int run_entry();
 };
 
 } /* namespace */

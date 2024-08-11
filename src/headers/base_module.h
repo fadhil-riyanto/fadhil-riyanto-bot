@@ -39,7 +39,7 @@ private:
         TgBot::Message::Ptr msg;
 
         virtual void call(TgBot::Bot *bot, std::string value, TgBot::Message::Ptr msg) = 0;
-        virtual void run_entry() = 0;
+        virtual int run_entry() = 0;
 };
 
 

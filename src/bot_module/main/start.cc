@@ -15,8 +15,11 @@ void FadhilRiyanto::mod::command::start_command::call(TgBot::Bot *bot, std::stri
         this->msg = msg;
 }
 
-void FadhilRiyanto::mod::command::start_command::run_entry()
+int FadhilRiyanto::mod::command::start_command::run_entry()
 {
         this->bot->getApi().sendMessage(
                 (*this->msg).chat->id, "start from module");
+
+        /* return 0 is must */
+        return 0;
 }
