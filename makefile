@@ -42,5 +42,3 @@ all_module:
 
 link: build/*.o
 	${CC} $^ -o fadhil_riyanto_bot ${LIB}
-
-all: all_libs all_module link
