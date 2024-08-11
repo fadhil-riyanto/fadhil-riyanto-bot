@@ -15,6 +15,7 @@
 
 /* local */
 #include "headers/_reg.h"
+#include "headers/start.h"
 
 int module_main::module_init(TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                 struct ini_config *config, struct ctx *ctx,
@@ -35,7 +36,10 @@ int module_main::module_next(std::string input)
         printf("module called \"%s\"\n", input.c_str());
 
         if (!input.compare("/start")) {
-                fmt::print("command called\n");
+                // fmt::print("command called\n");
+                FadhilRiyanto::mod::command::start_command start_command;
+                start_command.call(this->bot, "ini input", this->msg);
+                start_command.run_entry();
         }
 
         return 0;
