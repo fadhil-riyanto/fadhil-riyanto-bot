@@ -25,7 +25,7 @@ static inline TgBot::InlineKeyboardMarkup::Ptr __gen_keyboard(void)
         reportbug_button->url = "https://t.me/fadhil_riyanto";
 
         TgBot::InlineKeyboardButton::Ptr help_button(new TgBot::InlineKeyboardButton);
-        help_button->text = "report bugs";
+        help_button->text = "help";
         help_button->callbackData = "cb_help";
 
         row0.push_back(reportbug_button);
