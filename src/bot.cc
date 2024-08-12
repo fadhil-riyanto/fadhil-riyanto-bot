@@ -8,7 +8,6 @@
 #include <csignal>
 #include <cstddef>
 #include <fmt/core.h>
-#include <memory>
 #include <stdio.h>
 #include <tgbot/net/HttpClient.h>
 #include <tgbot/tgbot.h>
@@ -86,6 +85,10 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
                 this->bot_handle_message(&message, &ring);
         });
 
+        this->bot.getEvents().onCallbackQuery([this, &ring](TgBot::CallbackQuery::Ptr query) -> void {
+                this->bot_handle_callbackquery(&query, &ring);
+        });
+
         this->signal_status = &global_signal_status;
         
         try {
@@ -122,6 +125,12 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message
                 nullptr, 
                 replyParam
         );
+}
+
+void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_callbackquery(TgBot::CallbackQuery::Ptr *cb,
+                struct FadhilRiyanto::threading::queue_ring *ring)
+{
+        log_info((*cb)->data.c_str());
 }
 
 // void FadhilRiyanto::fadhil_riyanto_bot::bot_run_cleanup(int sigint)

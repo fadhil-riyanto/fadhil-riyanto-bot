@@ -37,6 +37,10 @@ public:
         void bot_show_basic_config(void);
         void bot_handle_message(TgBot::Message::Ptr *msg,
                 struct FadhilRiyanto::threading::queue_ring *ring);
+
+        void bot_handle_callbackquery(TgBot::CallbackQuery::Ptr *cb,
+                struct FadhilRiyanto::threading::queue_ring *ring);
+                
         static void bot_run_cleanup(int sigint);
         void bot_handle_queue_overflow(TgBot::Message::Ptr *msg);
 };
