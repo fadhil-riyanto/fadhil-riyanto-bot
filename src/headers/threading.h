@@ -16,18 +16,26 @@
 
 namespace FadhilRiyanto::threading {
 
+enum queue_type {
+        msg_input,
+        cb_input
+};
+
 struct message_queue_data {
-        TgBot::Message::Ptr data;
-        std::thread handler_th;
+        TgBot::Message::Ptr                     data;
+        TgBot::CallbackQuery::Ptr               cb_data;
+        enum queue_type                         queue_type;
+
+        std::thread                             handler_th;
 
         /* unique number assigned each queue */
-        long queue_num;
+        long                                    queue_num;
 
         /* true if alive */
-        bool state;
+        bool                                    state;
 
         /* true before cleaned by eventloop thread join */
-        bool need_join;
+        bool                                    need_join;
 };
 
 struct queue_ring
@@ -49,6 +57,7 @@ class thread_queue {
 public:
         static void thread_queue_init(int depth, struct queue_ring *ring);
         static bool send_queue(struct queue_ring *ring, TgBot::Message::Ptr message);
+        static bool send_cb_queue(struct queue_ring *ring, TgBot::CallbackQuery::Ptr  cb_data);
         static void thread_queue_destroy(struct queue_ring *ring);
 };
 
@@ -69,6 +78,11 @@ private:
         static void process_msg(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, 
                                 struct ini_config *config, struct ctx *ctx);
+
+        static void process_cb(int counter_idx, TgBot::Bot *bot, TgBot::CallbackQuery::Ptr cb_data, 
+                                struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, 
+                                struct ini_config *config, struct ctx *ctx);
+                                
         static void eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
                                                 struct ini_config *config, struct ctx *ctx);

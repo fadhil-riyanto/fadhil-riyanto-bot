@@ -46,6 +46,29 @@ bool FadhilRiyanto::threading::thread_queue::send_queue(struct queue_ring *ring,
 
                         /* set current state to ring */
                         (ring->queue_list + i)->data = message;
+                        (ring->queue_list + i)->queue_type = FadhilRiyanto::threading::queue_type::msg_input;
+                        (ring->queue_list + i)->need_join = false;
+                        (ring->queue_list + i)->queue_num = ring->counter;
+                        (ring->queue_list + i)->state = true;
+
+                        ring->counter = ring->counter + 1;
+
+                        return true;
+                }
+        }
+
+        return false;
+}
+
+bool FadhilRiyanto::threading::thread_queue::send_cb_queue(struct queue_ring *ring, TgBot::CallbackQuery::Ptr  cb_data)
+{
+        for(int i = 0; i < ring->depth; i++) {
+                if ((ring->queue_list + i)->need_join == 0 && (ring->queue_list + i)->state == 0 &&
+                        (ring->queue_list + i)->queue_num == -1) {
+
+                        /* set current state to ring */
+                        (ring->queue_list + i)->cb_data = cb_data;
+                        (ring->queue_list + i)->queue_type = FadhilRiyanto::threading::queue_type::cb_input;
                         (ring->queue_list + i)->need_join = false;
                         (ring->queue_list + i)->queue_num = ring->counter;
                         (ring->queue_list + i)->state = true;
@@ -114,22 +137,63 @@ void FadhilRiyanto::threading::thread_queue_runner::process_msg(int counter_idx,
         (ring->queue_list + counter_idx)->state = 0;
 }
 
+void FadhilRiyanto::threading::thread_queue_runner::process_cb(int counter_idx, 
+        TgBot::Bot *bot, TgBot::CallbackQuery::Ptr cb_data, struct queue_ring *ring, 
+        volatile std::sig_atomic_t *signal_handler, 
+        struct ini_config *config, struct ctx *ctx)
+{
+
+        // std::string res = fmt::format("your message {}!\n", msg->text);
+
+        // bot->getApi().sendMessage(
+        //         msg->chat->id,
+        //         res
+        // );
+        log_info("from threading: %s", cb_data->data.c_str());
+
+        // FadhilRiyanto::fadhil_riyanto_bot::handler handler(
+        //         &msg, bot, config, signal_handler, ctx
+        // );
+
+        (ring->queue_list + counter_idx)->need_join = 1;
+        (ring->queue_list + counter_idx)->state = 0;
+}
+
 
 void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int counter_idx, 
                 TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
                 struct ini_config *config, struct ctx *ctx)
 {
+        /* note: msg is unused */
         /* setup state */
 
         (ring->queue_list + counter_idx)->state = 1;
         (ring->queue_list + counter_idx)->need_join = 0;
         
+        /* check if type msg 
+        * use (ring->queue_list + counter_idx)->data
+        **/
 
-        (ring->queue_list + counter_idx)->handler_th = std::thread(
-                FadhilRiyanto::threading::thread_queue_runner::process_msg, 
-                        counter_idx, bot, msg, ring, signal_handler, config, ctx
-        );
+        if ((ring->queue_list + counter_idx)->queue_type == queue_type::msg_input) {
+                (ring->queue_list + counter_idx)->handler_th = std::thread(
+                        FadhilRiyanto::threading::thread_queue_runner::process_msg, 
+                                counter_idx, bot, (ring->queue_list + counter_idx)->data, ring, signal_handler, config, ctx
+                );
+        }
+
+        /* check if type msg 
+        * use (ring->queue_list + counter_idx)->cb_data
+        **/
+
+        if ((ring->queue_list + counter_idx)->queue_type == queue_type::cb_input) {
+                (ring->queue_list + counter_idx)->handler_th = std::thread(
+                        FadhilRiyanto::threading::thread_queue_runner::process_cb, 
+                                counter_idx, bot, (ring->queue_list + counter_idx)->cb_data, ring, signal_handler, config, ctx
+                );
+        }
+
+        
 
         DSHOW_ADDR(ctx->reserved);
 }
@@ -154,7 +218,7 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring 
                                         log_debug("create thread %lu", i);
 
                                 FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(
-                                        i, bot, (ring->queue_list + i)->data, ring, signal_handler,
+                                        i, bot, nullptr, ring, signal_handler,
                                         config, ctx
                                 );
                                 // this->bot.getApi().sendMessage((*msg)->chat->id, "halo " + parse_res.value);
