@@ -32,7 +32,7 @@ private:
 
 public:
         fadhil_riyanto_bot(struct ini_config* config, volatile std::sig_atomic_t *signal_status,
-                                struct ctx *ctx, const TgBot::HttpClient &httpClient);
+                                struct ctx *ctx);
         void bot_eventloop(void);
         void bot_show_basic_config(void);
         void bot_handle_message(TgBot::Message::Ptr *msg,

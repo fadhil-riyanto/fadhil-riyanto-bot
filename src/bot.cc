@@ -35,7 +35,7 @@ void signal_handler(int signal)
 
 
 FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config, 
-        volatile std::sig_atomic_t *signal_status, struct ctx *ctx, const TgBot::HttpClient &httpClient) : bot(config->bot_token, "http://127.0.0.1:8081", httpClient)
+        volatile std::sig_atomic_t *signal_status, struct ctx *ctx) : bot(config->bot_token, "http://127.0.0.1:8081")
 {
         this->ctx = ctx;
         this->config = config;
@@ -163,11 +163,10 @@ int main()
         //         &loaded_libs, 
         //         bot_module_N
         // );
-        TgBot::CurlHttpClient curlHttpClient;
+        // TgBot::CurlHttpClient curlHttpClient;
         
 
-        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx,
-                curlHttpClient);
+        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx);
         
         try {
                 /* devnote: remove */
