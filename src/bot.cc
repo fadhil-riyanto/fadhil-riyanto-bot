@@ -130,7 +130,13 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message
 void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_callbackquery(TgBot::CallbackQuery::Ptr *cb,
                 struct FadhilRiyanto::threading::queue_ring *ring)
 {
-        log_info((*cb)->data.c_str());
+
+        bool ret;
+
+        ret = FadhilRiyanto::threading::thread_queue::send_cb_queue(ring, (*cb));
+        if (ret == false) {
+                // this->bot_handle_queue_overflow(msg);
+        }
 }
 
 // void FadhilRiyanto::fadhil_riyanto_bot::bot_run_cleanup(int sigint)
