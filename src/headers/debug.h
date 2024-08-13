@@ -8,7 +8,11 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#include <tgbot/tgbot.h>
+
 #define DSHOW_ADDR(x)                   \
-        printf("%p\n", &x);                                      
+        printf("%p\n", &x);
+
+std::string debug_cb(TgBot::CallbackQuery::Ptr *cb);
 
 #endif
