@@ -1,6 +1,5 @@
 [TELEGRAM]
 bot_token = 12345:abcdefghikl
-
 command_prefix = /
 bot_username = @fadhil_riyanto_bot
 
@@ -13,7 +12,8 @@ enable_thread_queue_debug = true
 enable_on_create_thread_event = true
 enable_on_joined_thread_event = true
 enable_thread_bug_log = true
+enable_log_when_module_called = true
 
 [RUNTIME]
-queue_depth = 30
+queue_depth = 1
 queue_eventloop_sleep_ms = 100
