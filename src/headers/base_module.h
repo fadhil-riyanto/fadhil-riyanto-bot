@@ -12,6 +12,7 @@
 #include <tgbot/tgbot.h>
 #include <string>
 #include "command_parser.h"
+#include "inih_parser.h"
 
 /* bot_module abstract class */
 
@@ -37,8 +38,11 @@ private:
         TgBot::Bot *bot;
         std::string value;
         TgBot::Message::Ptr msg;
+        struct ini_config *config;
+        struct ctx *ctx;
 
-        virtual void call(TgBot::Bot *bot, std::string value, TgBot::Message::Ptr msg) = 0;
+        virtual void call(TgBot::Bot *bot, std::string value, TgBot::Message::Ptr msg, struct ctx *ctx, struct ini_config *config) = 0;
+        virtual void bind(struct ctx *ctx, struct ini_config *config) = 0;
         virtual int run_entry() = 0;
 };
 
