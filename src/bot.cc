@@ -20,6 +20,8 @@
 #include "headers/ctx.h"
 #include "headers/debug.h"
 #include "headers/db.h"
+#include <bson/bson.h>
+#include <mongoc/mongoc.h>
 
 namespace
 {
@@ -40,6 +42,7 @@ FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config,
         this->ctx = ctx;
         this->config = config;
         this->signal_status = signal_status;
+        DSHOW_ADDR(this->ctx);
 }
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
@@ -70,6 +73,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
         FadhilRiyanto::threading::thread_queue::thread_queue_init(
                 this->config->queue_depth, &ring
         );
+        
 
         FadhilRiyanto::threading::thread_queue_runner th_queue_runner;
         th_queue_runner.thread_queue_runner_link(
@@ -79,6 +83,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
                 this->config,
                 this->ctx
         );
+        
         
         th_queue_runner.create_child_eventloop();
 
@@ -154,6 +159,7 @@ int main()
 {
         std::signal(SIGINT, signal_handler);
         struct ini_config config;
+        mongoc_init();
 
 
         // struct FadhilRiyanto::dlsys::loaded_libs loaded_libs;
@@ -171,6 +177,8 @@ int main()
 
         /* start mongodb */
         FadhilRiyanto::db::db mongo_db;
+
+        /* note: mongodb_ctx will be internal class */
         struct FadhilRiyanto::db::ctx mongodb_ctx;
         mongo_db.setup_ptr(&mongodb_ctx);
         mongo_db.setup_conn("mongodb://localhost:27017");
@@ -178,8 +186,7 @@ int main()
         /* initializer reserved space here */
         struct ctx ctx;
         ctx.reserved = 10;
-        ctx.mongodb_ctx = &mongo_db;
-        DSHOW_ADDR(ctx.mongodb_ctx);
+        ctx.mongodb_ctx = mongoc_client_new("mongodb://localhost:27017");
 
         // FadhilRiyanto::dlsys::shared_lib_loader::config_module_load(
         //         config.module, 
@@ -201,7 +208,8 @@ int main()
         
 
         // FadhilRiyanto::dlsys::shared_lib_loader::close_all_lib(&loaded_libs);
-        mongo_db.clean();
+        mongoc_client_destroy(ctx.mongodb_ctx);
+        mongoc_cleanup();
         ini_free_mem(&config);
         return 0;
 
