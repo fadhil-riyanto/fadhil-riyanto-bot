@@ -192,10 +192,6 @@ void FadhilRiyanto::threading::thread_queue_runner::eventloop_th_setup_state(int
                                 counter_idx, bot, (ring->queue_list + counter_idx)->cb_data, ring, signal_handler, config, ctx
                 );
         }
-
-        
-
-        DSHOW_ADDR(ctx->reserved);
 }
 
 void FadhilRiyanto::threading::thread_queue_runner::eventloop(struct queue_ring *ring, 
