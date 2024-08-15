@@ -15,16 +15,16 @@ add_library(handler src/handler.cc)
 add_library(db src/db.cc)
 
 # module
-add_library(module_main src/bot_module/main/_reg.cc src/bot_module/main/start.cc)
+add_library(module_main src/bot_module/main/start.cc src/bot_module/main/_reg.cc)
 
 add_executable(fadhil_riyanto_bot src/bot.cc)
 include_directories(/usr/include/libmongoc-1.0/)
 include_directories(/usr/include/libbson-1.0/)
 
 target_link_libraries(fadhil_riyanto_bot threading log_c 
-                        threading handler exception module_main 
+                        threading handler exception  
                         utils_command_parser int_helper inih_parser 
-                        utils_string_helper db)
+                        utils_string_helper db module_main)
 
 target_link_libraries(fadhil_riyanto_bot ${LIBFLAGS})
 
