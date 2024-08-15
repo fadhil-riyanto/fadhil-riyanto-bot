@@ -6,14 +6,12 @@
  */
 
 #include "../../headers/command_parser.h"
-#include "../../headers/debug.h"
 #include "../../headers/ctx.h"
 #include "../../headers/inih_parser.h"
-#include "../../../submodule/log.c-patched/src/log.h"
+#include <cstddef>
 #include <tgbot/tgbot.h>
 #include <string>
 #include <fmt/core.h>
-#include <stdio.h>
 
 /* local */
 #include "headers/_reg.h"
@@ -27,6 +25,7 @@ int module_main::module_init(TgBot::Bot *bot, TgBot::Message::Ptr msg,
         this->msg = msg;
         this->config = config;
         this->ctx = ctx;
+        this->config = config;
         
         return this->module_next(res->command);
 }
@@ -36,9 +35,21 @@ int module_main::module_next(std::string input)
         if (!input.compare("/start")) {
                 // fmt::print("command called\n");
                 FadhilRiyanto::mod::command::start_command start_command;
-                start_command.call(this->bot, "ini input", this->msg);
+                int a = 9;
+                int b = 2;
+
+                start_command.call(this->bot, "temp val", this->msg, this->ctx, this->config);
+                // start_command.call(this->bot, "ini input", this->msg, this->ctx, this->config);
+                // start_command.bind(this->ctx, this->config);
                 return start_command.run_entry();
         }
+
+        // if (!input.compare("/startd")) {
+        //         // fmt::print("command called\n");
+        //         FadhilRiyanto::mod::command::startd_command startd_command;
+        //         startd_command.call(this->bot, "ini input", this->msg);
+        //         return startd_command.run_entry();
+        // }
 
         return -1;
 }
