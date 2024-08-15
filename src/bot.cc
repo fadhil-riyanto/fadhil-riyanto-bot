@@ -19,6 +19,7 @@
 #include "headers/bot.h"
 #include "headers/ctx.h"
 #include "headers/debug.h"
+#include "headers/db.h"
 
 namespace
 {
@@ -168,10 +169,17 @@ int main()
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
 
+        /* start mongodb */
+        FadhilRiyanto::db::db mongo_db;
+        struct FadhilRiyanto::db::ctx mongodb_ctx;
+        mongo_db.setup_ptr(&mongodb_ctx);
+        mongo_db.setup_conn("mongodb://localhost:27017");
+
         /* initializer reserved space here */
         struct ctx ctx;
         ctx.reserved = 10;
-        DSHOW_ADDR(ctx.reserved);
+        ctx.mongodb_ctx = &mongo_db;
+        DSHOW_ADDR(ctx.mongodb_ctx);
 
         // FadhilRiyanto::dlsys::shared_lib_loader::config_module_load(
         //         config.module, 
@@ -193,7 +201,7 @@ int main()
         
 
         // FadhilRiyanto::dlsys::shared_lib_loader::close_all_lib(&loaded_libs);
-
+        mongo_db.clean();
         ini_free_mem(&config);
         return 0;
 

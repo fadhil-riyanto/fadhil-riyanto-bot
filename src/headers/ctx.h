@@ -10,7 +10,10 @@
 #ifndef CTX_H
 #define CTX_H
 
+#include "db.h"
+
 struct ctx {
+        FadhilRiyanto::db::db *mongodb_ctx;
         long    reserved;
 };
 
