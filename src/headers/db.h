@@ -10,6 +10,7 @@
 
 #include <mongoc/mongoc.h>
 #include <bson/bson.h>
+#include <string>
 
 namespace FadhilRiyanto::db {
 
@@ -29,8 +30,23 @@ namespace FadhilRiyanto::db {
                 void setup_ptr(struct ctx *ctx);
                 /* https://github.com/fadhil-riyanto/mongodb-crud/blob/255fd5b8cbec55027a9c6d0e545fb0f13292e486/include/conn.h#L14 */
                 void setup_conn(const char* uri);
-                void select(char* dbname, char* collname); /* return ctx */
+                mongoc_client_t* export_conn();
+                mongoc_collection_t* select(std::string dbname, std::string collname); /* return ctx */
                 void clean();
+        };
+
+        class key_value {
+        private:
+                db *dbptr;
+        public:
+                void bind(db *db);
+
+                /* not implemented yet */
+                void set(std::string key, std::string value);
+                void get(std::string key);
+                
+                void dump_all();
+                
         };
 }
 
