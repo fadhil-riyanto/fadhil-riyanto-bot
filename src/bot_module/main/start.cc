@@ -8,6 +8,7 @@
 #include "headers/start.h"
 #include "../../headers/ctx.h"
 #include "../../headers/inih_parser.h"
+#include <cstddef>
 
 
 void FadhilRiyanto::mod::command::start_command::call(TgBot::Bot *bot, std::string value,
@@ -58,12 +59,23 @@ static inline TgBot::InlineKeyboardMarkup::Ptr __gen_keyboard(void)
 
 int FadhilRiyanto::mod::command::start_command::run_entry()
 {
+        const bson_t *doc;
         /* this->bot->getApi().sendMessage(
                 (*this->msg).chat->id, "start from module"); */;
         
         mongoc_collection_t *collection = mongoc_client_get_collection(
                 this->ctx->mongodb_ctx, "test-db", "collection"
         );
+
+        bson_t *query = bson_new(); /* empty query */
+        mongoc_cursor_t *cursor = mongoc_collection_find_with_opts(collection, query, NULL, NULL);
+
+
+        while (mongoc_cursor_next (cursor, &doc)) {
+                char* str = bson_as_canonical_extended_json (doc, NULL);
+                printf ("%s\n", str);
+                bson_free (str);
+        }
 
         // FadhilRiyanto::db::key_value key_value;
         // key_value.bind((*this->ctx).mongodb_ctx);
