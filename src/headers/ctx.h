@@ -10,10 +10,10 @@
 #ifndef CTX_H
 #define CTX_H
 
-#include "db.h"
+#include <mongoc/mongoc.h>
 
 struct ctx {
-        FadhilRiyanto::db::db *mongodb_ctx;
+        mongoc_client_t *mongodb_ctx;
         long    reserved;
 };
 
