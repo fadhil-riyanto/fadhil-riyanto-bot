@@ -26,6 +26,7 @@ namespace FadhilRiyanto::db {
         private:
                 struct ctx *ctx;
         public:
+                void setup_ptr(struct ctx *ctx);
                 /* https://github.com/fadhil-riyanto/mongodb-crud/blob/255fd5b8cbec55027a9c6d0e545fb0f13292e486/include/conn.h#L14 */
                 void setup_conn(const char* uri);
                 void select(char* dbname, char* collname); /* return ctx */
