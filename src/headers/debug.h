@@ -9,9 +9,10 @@
 #define DEBUG_H
 
 #include <tgbot/tgbot.h>
+#include "../../submodule/log.c-patched/src/log.h"
 
 #define DSHOW_ADDR(x)                   \
-        printf("%p\n", &x);
+        log_debug("%p", &x);
 
 std::string debug_cb(TgBot::CallbackQuery::Ptr *cb);
 
