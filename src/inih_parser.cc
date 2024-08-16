@@ -70,6 +70,10 @@ int parse_config_cb(void* user, const char* section, const char* name,
                 config->queue_depth = atoi(value);
         }  else if (MATCH("RUNTIME", "queue_eventloop_sleep_ms")) {
                 config->queue_eventloop_sleep_ms = atoi(value);
+        }  else if (MATCH("DATABASE", "mongodb_conn_string")) {
+                config->mongodb_conn_string = strdup(value);
+        }  else if (MATCH("DATABASE", "mongodb_db_target")) {
+                config->mongodb_db_target = strdup(value);
         }  else {
                 return 0;
         }
@@ -81,7 +85,8 @@ void ini_free_mem(struct ini_config *config)
 {
         free(config->bot_token);
         free(config->bot_username);
-
+        free(config->mongodb_conn_string);
+        free(config->mongodb_db_target);
 }
 
 void ini_show_config(struct ini_config *config)

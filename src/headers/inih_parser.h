@@ -27,6 +27,9 @@ struct ini_config {
         int             queue_depth;
         int             queue_eventloop_sleep_ms;
 
+        char*           mongodb_conn_string;
+        char*           mongodb_db_target;
+
         char*           module[bot_module_N];
 };
 
