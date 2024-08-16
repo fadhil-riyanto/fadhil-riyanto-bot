@@ -162,7 +162,7 @@ int main()
         /* init reserved space here */
         struct ctx ctx;
         ctx.reserved = 10;
-        ctx.mongodb_ctx = mongoc_client_new("mongodb://localhost:27017");
+        ctx.mongodb_ctx = mongoc_client_new(config.mongodb_conn_string);
 
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx);
         
