@@ -19,7 +19,6 @@
 #include "headers/bot.h"
 #include "headers/ctx.h"
 #include "headers/debug.h"
-#include "headers/db.h"
 #include <bson/bson.h>
 #include <mongoc/mongoc.h>
 
@@ -37,7 +36,8 @@ void signal_handler(int signal)
 
 
 FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config, 
-        volatile std::sig_atomic_t *signal_status, struct ctx *ctx) : bot(config->bot_token, "http://127.0.0.1:8081")
+        volatile std::sig_atomic_t *signal_status, struct ctx *ctx) 
+        : bot(config->bot_token, "http://127.0.0.1:8081")
 {
         this->ctx = ctx;
         this->config = config;
@@ -47,7 +47,8 @@ FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config,
 
 void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
 {
-        log_info("bot_username: %s", this->bot.getApi().getMe()->username.c_str());
+        log_info("bot_username: %s", this->bot.getApi().getMe()
+                                                ->username.c_str());
         
 }
 
@@ -62,7 +63,11 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
         if (ret == false) {
                 this->bot_handle_queue_overflow(msg);
         }
-        FadhilRiyanto::threading::thread_helper::queue_debugger(this->config->queue_depth, ring, this->config);
+        FadhilRiyanto::threading::thread_helper::queue_debugger(
+                                this->config->queue_depth, 
+                                ring, 
+                                this->config
+        );
 
 
 }
@@ -119,7 +124,6 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_eventloop(void)
 void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message::Ptr *msg = NULL)
 {       
         TgBot::ReplyParameters *ctxptr = new TgBot::ReplyParameters();
-
         TgBot::ReplyParameters::Ptr replyParam(ctxptr);
         
         replyParam->messageId = (*msg)->messageId;
@@ -136,7 +140,6 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message
 void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_callbackquery(TgBot::CallbackQuery::Ptr *cb,
                 struct FadhilRiyanto::threading::queue_ring *ring)
 {
-
         bool ret;
 
         ret = FadhilRiyanto::threading::thread_queue::send_cb_queue(ring, (*cb));
@@ -145,71 +148,36 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_callbackquery(TgBot::Callback
         }
 }
 
-// void FadhilRiyanto::fadhil_riyanto_bot::bot_run_cleanup(int sigint)
-// {
-//         /* call on sigint signal */
-//         log_warn("got SIGINT, exitting ...");
-//         global_signal_status = SIGINT;
-// }
-
-
-
-
 int main()
 {
         std::signal(SIGINT, signal_handler);
         struct ini_config config;
         mongoc_init();
 
-
-        // struct FadhilRiyanto::dlsys::loaded_libs loaded_libs;
-        
-
-        // if (ini_parse("config.ini", parse_config_cb, &config) < 0) {
-        //         log_fatal("%s", "Can't load config.ini \n");
-        //         ini_free_mem(&config);
-        //         return -1;
-        // }
         ini_load_config("config.ini", &config);
 
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
 
-        /* start mongodb */
-        FadhilRiyanto::db::db mongo_db;
-
-        /* note: mongodb_ctx will be internal class */
-        struct FadhilRiyanto::db::ctx mongodb_ctx;
-        mongo_db.setup_ptr(&mongodb_ctx);
-        mongo_db.setup_conn("mongodb://localhost:27017");
-
-        /* initializer reserved space here */
+        /* init reserved space here */
         struct ctx ctx;
         ctx.reserved = 10;
         ctx.mongodb_ctx = mongoc_client_new("mongodb://localhost:27017");
 
-        // FadhilRiyanto::dlsys::shared_lib_loader::config_module_load(
-        //         config.module, 
-        //         &loaded_libs, 
-        //         bot_module_N
-        // );
-        // TgBot::CurlHttpClient curlHttpClient;
-        
-
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx);
         
         try {
-                /* devnote: remove */
                 fadhil_riyanto_bot.bot_show_basic_config();
                 fadhil_riyanto_bot.bot_eventloop();
         } catch (boost::wrapexcept<boost::system::system_error> e) {
                 log_fatal("network error %s", e.what());
         }
         
+        /* free current resource */
 
-        // FadhilRiyanto::dlsys::shared_lib_loader::close_all_lib(&loaded_libs);
         mongoc_client_destroy(ctx.mongodb_ctx);
         mongoc_cleanup();
+
         ini_free_mem(&config);
         return 0;
 
