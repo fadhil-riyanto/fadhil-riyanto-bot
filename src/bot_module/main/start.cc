@@ -8,6 +8,7 @@
 #include "headers/start.h"
 #include "../../headers/ctx.h"
 #include "../../headers/inih_parser.h"
+#include "bson/bson.h"
 #include <cstddef>
 
 
@@ -30,14 +31,14 @@ int FadhilRiyanto::mod::command::start_command::bind(struct ctx *ctx, struct ini
 
 static inline TgBot::InlineKeyboardMarkup::Ptr __gen_keyboard(void)
 {
-        TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
+        TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup());
         std::vector<TgBot::InlineKeyboardButton::Ptr> row0;
 
-        TgBot::InlineKeyboardButton::Ptr reportbug_button(new TgBot::InlineKeyboardButton);
+        TgBot::InlineKeyboardButton::Ptr reportbug_button(new TgBot::InlineKeyboardButton());
         reportbug_button->text = "report bugs";
         reportbug_button->url = "https://t.me/fadhil_riyanto";
 
-        TgBot::InlineKeyboardButton::Ptr help_button(new TgBot::InlineKeyboardButton);
+        TgBot::InlineKeyboardButton::Ptr help_button(new TgBot::InlineKeyboardButton());
         help_button->text = "help";
         help_button->callbackData = "cb_help";
 
@@ -76,6 +77,10 @@ int FadhilRiyanto::mod::command::start_command::run_entry()
                 printf ("%s\n", str);
                 bson_free (str);
         }
+
+        bson_free(query);
+        mongoc_collection_destroy(collection);
+        mongoc_cursor_destroy(cursor);
 
         // FadhilRiyanto::db::key_value key_value;
         // key_value.bind((*this->ctx).mongodb_ctx);
