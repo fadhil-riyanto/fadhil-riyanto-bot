@@ -14,6 +14,7 @@
 #include <tgbot/types/ReplyParameters.h>
 #include <tgbot/net/CurlHttpClient.h>
 #include "headers/inih_parser.h"
+#include "headers/key_value.h"
 #include "headers/threading.h"
 #include "../submodule/log.c-patched/src/log.h"
 #include "headers/bot.h"
@@ -21,6 +22,7 @@
 #include "headers/debug.h"
 #include <bson/bson.h>
 #include <mongoc/mongoc.h>
+#include "utils/dbg.h"
 
 namespace
 {
@@ -163,6 +165,15 @@ int main()
         struct ctx ctx;
         ctx.reserved = 10;
         ctx.mongodb_ctx = mongoc_client_new(config.mongodb_conn_string);
+
+        /* test */
+        FadhilRiyanto::db::key_value key_value(ctx.mongodb_ctx, &config);
+
+        if (ctx.mongodb_ctx == NULL) {
+                perror("mongoc");
+        }
+
+        key_value.set("test", "test 2");
 
         FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx);
         
