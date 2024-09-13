@@ -14,6 +14,9 @@
 #define DSHOW_ADDR(x)                   \
         log_debug("%p", &x);
 
+#define DSHOW_STR(x)                    \
+        log_debug("%s", x);
+
 std::string debug_cb(TgBot::CallbackQuery::Ptr *cb);
 
 #endif
