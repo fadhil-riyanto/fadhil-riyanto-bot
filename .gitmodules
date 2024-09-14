@@ -7,3 +7,6 @@
 [submodule "submodule/--force"]
 	path = submodule/--force
 	url = git@github.com:fadhil-riyanto/libghrss.git
+[submodule "submodule/libghrss"]
+	path = submodule/libghrss
+	url = git@github.com:fadhil-riyanto/libghrss.git
