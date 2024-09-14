@@ -29,25 +29,25 @@ void FadhilRiyanto::db::key_value::_select_default_coll()
 
 bool FadhilRiyanto::db::key_value::set(std::string value, std::string key)
 {
-        bson_t *document;
+        bson_t document;
         bson_error_t error;
         bson_oid_t oid;
 
         bool ret;
 
-        document = bson_new ();
+        bson_init(&document);
         bson_oid_init (&oid, NULL);
-        BSON_APPEND_OID (document, "_id", &oid);
-        BSON_APPEND_UTF8 (document, "hello", "world");
+        bson_append_oid(&document, "_id", -1, &oid);
+        bson_append_utf8(&document, key.c_str(), -1, value.c_str(), -1);
 
 
-        ret = mongoc_collection_insert(this->current_coll_state, MONGOC_INSERT_NONE, document, NULL, &error);
+        ret = mongoc_collection_insert(this->current_coll_state, MONGOC_INSERT_NONE, &document, NULL, &error);
 
         if (!ret) {
                 fprintf(stderr, "%s\n", error.message);
         }
 
-        bson_destroy(document);
+        bson_destroy(&document);
         return ret;
 }
 
