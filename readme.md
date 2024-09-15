@@ -63,10 +63,10 @@ telegram-bot-api --api-id=YOUR_API_ID --api-hash=YOUR_API_HASH --local --http-ip
 git clone https://github.com/fadhil-riyanto/fadhil-riyanto-bot.git
 
 cd fadhil-riyanto-bot
-git submodule update --init --recursive --depth 1
-make all_libs -j4
-make all_module -j4
-make link
+git submodule update
+mkdir build
+cmake ..
+make -j4
 ```
 
 ## Licence
