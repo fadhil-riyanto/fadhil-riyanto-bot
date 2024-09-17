@@ -24,6 +24,8 @@
 #include <mongoc/mongoc.h>
 #include "utils/dbg.h"
 
+#define DEVENV
+
 namespace
 {
         volatile std::sig_atomic_t global_signal_status;
@@ -150,13 +152,35 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_callbackquery(TgBot::Callback
         }
 }
 
+static int check_config_exist_or_die(struct ini_config *config) 
+{
+        #ifdef DEVENV
+        if (access("config.ini", F_OK) == 0) {
+                ini_load_config("config.ini", config);
+        #else
+        if (access("/etc/fadhil-riyanto-bot/config.ini", F_OK) == 0) {
+                ini_load_config("/etc/fadhil-riyanto-bot/config.ini", config);
+        #endif
+                return 0;
+        } else {
+                return -1;
+        }
+
+}
+
 int main()
 {
         std::signal(SIGINT, signal_handler);
         struct ini_config config;
+        
+
+        if (check_config_exist_or_die(&config) == -1) {
+                return -1;
+        }
+
         mongoc_init();
 
-        ini_load_config("config.ini", &config);
+        
 
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
