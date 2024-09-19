@@ -13,6 +13,7 @@
 #include <tgbot/tgbot.h>
 #include <tgbot/types/ReplyParameters.h>
 #include <tgbot/net/CurlHttpClient.h>
+#include <tgbot/Api.h>
 #include "headers/inih_parser.h"
 #include "headers/key_value.h"
 #include "headers/threading.h"
@@ -25,6 +26,7 @@
 #include "utils/dbg.h"
 
 #define DEVENV
+#define HAVE_CURL
 
 namespace
 {
@@ -40,9 +42,14 @@ void signal_handler(int signal)
 
 
 FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config, 
-        volatile std::sig_atomic_t *signal_status, struct ctx *ctx) 
-        : bot(config->bot_token, "http://127.0.0.1:8081")
+        volatile std::sig_atomic_t *signal_status, struct ctx *ctx, TgBot::CurlHttpClient *api_http) 
+        : bot(config->bot_token, "http://127.0.0.1:8081"), api(config->bot_token, *api_http,  "http://127.0.0.1:8081")
 {
+        // TgBot::CurlHttpClient curlhttpclient;
+
+        // TgBot::Api 
+
+        // this->api = api;
         this->ctx = ctx;
         this->config = config;
         this->signal_status = signal_status;
@@ -141,14 +148,42 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message
         );
 }
 
+/* note: vg_err uninitialized value L109 */
+void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow_cb(TgBot::CallbackQuery::Ptr *cb = NULL)
+{       
+        // bool result = TgBot::Api::answerCallbackQuery()
+                
+        // )
+
+        printf("%s\n", (*cb)->id.c_str());
+
+
+        
+}
+
 void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_callbackquery(TgBot::CallbackQuery::Ptr *cb,
                 struct FadhilRiyanto::threading::queue_ring *ring)
 {
         bool ret;
 
+        // TgBot::Api::answerCallbackQuery(
+        //         (*cb)->id,
+        //         "test cb",
+        //         1,
+        //         "",
+        //         1
+        // );
+        this->api.answerCallbackQuery(
+                (*cb)->id,
+                "test cb",
+                1,
+                "",
+                1
+        );
+
         ret = FadhilRiyanto::threading::thread_queue::send_cb_queue(ring, (*cb));
         if (ret == false) {
-                // this->bot_handle_queue_overflow(msg);
+                this->bot_handle_queue_overflow_cb(cb);
         }
 }
 
@@ -199,7 +234,9 @@ int main()
 
         key_value.set("test", "test 2");
 
-        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx);
+        TgBot::CurlHttpClient curlhttpclient;
+
+        FadhilRiyanto::fadhil_riyanto_bot fadhil_riyanto_bot(&config, &global_signal_status, &ctx, &curlhttpclient);
         
         try {
                 fadhil_riyanto_bot.bot_show_basic_config();

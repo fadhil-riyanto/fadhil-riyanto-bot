@@ -6,7 +6,9 @@
  */
 
 #include "command_parser.h"
+#include <tgbot/Api.h>
 #include <tgbot/tgbot.h>
+#include <tgbot/types/CallbackQuery.h>
 
 #include "threading.h"
 
@@ -24,6 +26,7 @@ private:
         struct command_parser_result *res;
 
         TgBot::Bot bot;
+        TgBot::Api api;
         struct ini_config *config;
         struct ctx *ctx;
         volatile std::sig_atomic_t *signal_status;
@@ -32,7 +35,7 @@ private:
 
 public:
         fadhil_riyanto_bot(struct ini_config* config, volatile std::sig_atomic_t *signal_status,
-                                struct ctx *ctx);
+                                struct ctx *ctx, TgBot::CurlHttpClient *api_http);
         void bot_eventloop(void);
         void bot_show_basic_config(void);
         void bot_handle_message(TgBot::Message::Ptr *msg,
@@ -43,6 +46,7 @@ public:
                 
         static void bot_run_cleanup(int sigint);
         void bot_handle_queue_overflow(TgBot::Message::Ptr *msg);
+        void bot_handle_queue_overflow_cb(TgBot::CallbackQuery::Ptr *cb);
 };
 
 
