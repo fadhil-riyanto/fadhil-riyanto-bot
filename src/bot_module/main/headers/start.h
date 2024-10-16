@@ -8,8 +8,8 @@
 #ifndef BOT_MODULE_MAIN_H
 #define BOT_MODULE_MAIN_H
 
-#include "../../../../headers/base_module.h"
-#include "../../../../headers/inih_parser.h"
+#include "../../../headers/base_module.h"
+#include "../../../headers/inih_parser.h"
 #include <tgbot/tgbot.h>
 
 namespace FadhilRiyanto::mod::command {
