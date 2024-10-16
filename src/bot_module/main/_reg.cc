@@ -14,7 +14,7 @@
 
 /* local */
 #include "headers/_reg.h"
-#include "msg/headers/start.h"
+#include "headers/start.h"
 
 int module_main::module_init(TgBot::Bot *bot, TgBot::Message::Ptr msg, 
                                 struct ini_config *config, struct ctx *ctx,
