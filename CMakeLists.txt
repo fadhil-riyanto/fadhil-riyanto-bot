@@ -25,7 +25,7 @@ add_library(db src/db.cc)
 add_library(repo_key_value src/repositories/key_value.cc)
 
 # module
-add_library(module_main src/bot_module/main/msg/start.cc src/bot_module/main/_reg.cc)
+add_library(modules src/bot_module/main/start.cc)
 
 add_executable(fadhil_riyanto_bot src/bot.cc)
 
@@ -38,7 +38,7 @@ include_directories(${LIBBSON_INCLUDE_DIRS})
 target_link_libraries(fadhil_riyanto_bot threading log_c 
                         threading handler exception  
                         utils_command_parser int_helper inih_parser 
-                        utils_string_helper db module_main repo_key_value)
+                        utils_string_helper db modules repo_key_value)
 
 # target_link_libraries(fadhil_riyanto_bot  PkgConfig::PKG_FMT)
 target_link_libraries(fadhil_riyanto_bot ${LIBFLAGS} PkgConfig::CURL PkgConfig::LIBMONGOC PkgConfig::FMT)
