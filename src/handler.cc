@@ -17,6 +17,7 @@
 /* module headers start */
 // #include "bot_module/main/headers/_reg.h"
 #include "bot_module/main/headers/start.h"
+#include "bot_module/main/headers/help.h"
 /* module headers end */
 
 FadhilRiyanto::fadhil_riyanto_bot::handler::handler(TgBot::Message::Ptr *message, 
@@ -81,6 +82,11 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_command_input(
       
         if (!res->command.compare("/start")) {
                 start_command cmd_ctx;
+                cmd_ctx.req(this->ctx, this->bot, this->msg, NULL, this->config);
+                cmd_ctx.run();
+        }
+        if (!res->command.compare("/help")) {
+                help_command cmd_ctx;
                 cmd_ctx.req(this->ctx, this->bot, this->msg, NULL, this->config);
                 cmd_ctx.run();
         }

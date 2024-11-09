@@ -25,7 +25,10 @@ add_library(db src/db.cc)
 add_library(repo_key_value src/repositories/key_value.cc)
 
 # module
-add_library(modules src/bot_module/main/start.cc)
+add_library(modules src/bot_module/main/start.cc 
+                        src/bot_module/main/help.cc
+                        src/bot_module/main/help_mod.cc
+)
 
 add_executable(fadhil_riyanto_bot src/bot.cc)
 
