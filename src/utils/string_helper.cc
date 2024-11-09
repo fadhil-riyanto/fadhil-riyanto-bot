@@ -8,6 +8,7 @@
 #include "../headers/string_helper.h"
 #include <algorithm>
 #include <string>
+#include <sstream>
 
 namespace FadhilRiyanto::string_utils {
 
@@ -35,6 +36,26 @@ bool string_helper::str2bool(std::string inp)
 std::string string_helper::bool2str(bool inp)
 {
         return (inp == true) ? "true" : "false";
+}
+
+std::string string_helper::split_n_index(std::string src, int index)
+{
+        std::istringstream iss(src);
+        std::string s;
+
+        int initial = 0;
+
+        while(getline(iss, s, ' ' )) {
+                
+                if (initial == index) {
+                        return s;
+                }
+
+                initial++;
+        }
+
+        return 0;
+
 }
 
 }
