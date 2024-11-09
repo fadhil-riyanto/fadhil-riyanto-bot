@@ -6,6 +6,7 @@
  */
 
 #include "../headers/string_helper.h"
+#include <algorithm>
 #include <string>
 
 namespace FadhilRiyanto::string_utils {
