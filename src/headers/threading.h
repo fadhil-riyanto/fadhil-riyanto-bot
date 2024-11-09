@@ -83,7 +83,7 @@ private:
                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler, 
                                 struct ini_config *config, struct ctx *ctx);
                                 
-        static void eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, TgBot::Message::Ptr msg, 
+        static void eventloop_th_setup_state(int counter_idx, TgBot::Bot *bot, 
                                                 struct queue_ring *ring, volatile std::sig_atomic_t *signal_handler,
                                                 struct ini_config *config, struct ctx *ctx);
 public:
