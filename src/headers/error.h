@@ -15,6 +15,11 @@ namespace FadhilRiyanto::error {
         public:
                 virtual char const* what();
         };
+
+        class handler_not_found : std::exception {
+        public:
+                virtual char const* what();
+        };
 };
 
 #endif
