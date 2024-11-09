@@ -21,9 +21,6 @@
 #include "headers/bot.h"
 #include "headers/ctx.h"
 #include "headers/debug.h"
-#include <bson/bson.h>
-#include <mongoc/mongoc.h>
-#include "utils/dbg.h"
 
 #define DEVENV
 #define HAVE_CURL
@@ -173,13 +170,6 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_callbackquery(TgBot::Callback
         //         "",
         //         1
         // );
-        this->api.answerCallbackQuery(
-                (*cb)->id,
-                "test cb",
-                1,
-                "",
-                1
-        );
 
         ret = FadhilRiyanto::threading::thread_queue::send_cb_queue(ring, (*cb));
         if (ret == false) {

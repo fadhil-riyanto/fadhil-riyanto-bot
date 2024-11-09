@@ -8,13 +8,15 @@
 #include "headers/handler.h"
 #include "headers/command_parser.h"
 #include "headers/error.h"
+#include <cstddef>
 #include <cstdio>
 #include <fmt/core.h>
 #include <tgbot/tgbot.h>
 #include "../submodule/log.c-patched/src/log.h"
 
 /* module headers start */
-#include "bot_module/main/headers/_reg.h"
+// #include "bot_module/main/headers/_reg.h"
+#include "bot_module/main/headers/start.h"
 /* module headers end */
 
 FadhilRiyanto::fadhil_riyanto_bot::handler::handler(TgBot::Message::Ptr *message, 
@@ -76,15 +78,14 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_command_input(
         int ret = 0;
 
         /* main handler start */
-        module_main module_main;
-        ret = module_main.module_init(
-                this->bot, 
-                (*this->msg), 
-                this->config, 
-                this->ctx, /* this is reserved */
-                &this->res
-        );
+      
+        if (!res->command.compare("/start")) {
+                start_command cmd_ctx;
+                cmd_ctx.req(this->ctx, this->bot, this->msg, NULL, this->config);
+                cmd_ctx.run();
+        }
 
+        
         if (ret == 0) {
                 if (this->config->enable_log_when_module_called) {
                         log_debug("successfully executed command %s", res->command.c_str());
@@ -92,4 +93,24 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_command_input(
         }
 
 
+}
+
+
+/* this below is callback handler */
+
+FadhilRiyanto::fadhil_riyanto_bot::cb_handler::cb_handler(TgBot::CallbackQuery::Ptr *callback, TgBot::Bot *bot, struct ini_config *config,
+                        volatile std::sig_atomic_t *signal_status, struct ctx *ctx)
+{
+        this->callback = callback;
+        this->bot = bot;
+        this->config = config;
+        this->signal_status = signal_status;
+        this->ctx = ctx;
+
+        this->handle_cb();
+}
+
+void FadhilRiyanto::fadhil_riyanto_bot::cb_handler::handle_cb()
+{
+        printf("handled here\n");
 }
