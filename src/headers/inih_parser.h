@@ -21,6 +21,7 @@ struct ini_config {
         bool            enable_on_joined_thread_event;
         bool            enable_thread_bug_log;
         bool            enable_log_when_module_called;
+        bool            enable_tg_input_logs;
         
         char            command_prefix;
         char*           bot_username;
