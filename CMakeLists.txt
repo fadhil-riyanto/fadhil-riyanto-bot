@@ -28,6 +28,7 @@ add_library(repo_key_value src/repositories/key_value.cc)
 add_library(modules src/bot_module/main/start.cc 
                         src/bot_module/main/help.cc
                         src/bot_module/main/help_mod.cc
+                        src/bot_module/main/help_cb.cc
 )
 
 add_executable(fadhil_riyanto_bot src/bot.cc)

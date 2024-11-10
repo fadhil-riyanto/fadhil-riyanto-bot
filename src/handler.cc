@@ -13,12 +13,16 @@
 #include <fmt/core.h>
 #include <tgbot/tgbot.h>
 #include "../submodule/log.c-patched/src/log.h"
+#include "headers/string_helper.h"
 
 /* module headers start */
 // #include "bot_module/main/headers/_reg.h"
 #include "bot_module/main/headers/start.h"
 #include "bot_module/main/headers/help.h"
 /* module headers end */
+
+#include "bot_module/main/headers/help_cb.h"
+
 
 FadhilRiyanto::fadhil_riyanto_bot::handler::handler(TgBot::Message::Ptr *message, 
                 TgBot::Bot *bot, struct ini_config *config,
@@ -118,5 +122,15 @@ FadhilRiyanto::fadhil_riyanto_bot::cb_handler::cb_handler(TgBot::CallbackQuery::
 
 void FadhilRiyanto::fadhil_riyanto_bot::cb_handler::handle_cb()
 {
-        printf("handled here\n");
+        std::string command = FadhilRiyanto::string_utils::string_helper::split_n_index(
+                (*this->callback)->data, 0);
+
+        if (command == "help_cb") {
+                help_cb help_cb;
+                help_cb.req(this->ctx, this->bot, this->callback, NULL, config);
+                help_cb.run();
+        }
+
+
+        printf("cmd: %s\n", command.c_str());
 }
