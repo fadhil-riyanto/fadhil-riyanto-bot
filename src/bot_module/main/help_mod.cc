@@ -31,11 +31,29 @@ TgBot::InlineKeyboardMarkup::Ptr help_mod::__gen_help_keyboard(void)
         keyboard->inlineKeyboard.push_back(row0);
 
         std::vector<TgBot::InlineKeyboardButton::Ptr> row1;
-        mainbtn->text = "Anime";
-        mainbtn->callbackData = "help_cb anime";
-        row1.push_back(mainbtn);
+
+        TgBot::InlineKeyboardButton::Ptr animebtn(new TgBot::InlineKeyboardButton());
+        animebtn->text = "Anime";
+        animebtn->callbackData = "help_cb anime";
+        row1.push_back(animebtn);
 
         keyboard->inlineKeyboard.push_back(row1);
+
+        return keyboard;
+}
+
+TgBot::InlineKeyboardMarkup::Ptr help_mod::__gen_help_keyboard_back()
+{
+        TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup());
+
+        std::vector<TgBot::InlineKeyboardButton::Ptr> row0;
+
+        TgBot::InlineKeyboardButton::Ptr back_btn(new TgBot::InlineKeyboardButton());
+        back_btn->text = "back";
+        back_btn->callbackData = "help_cb back";
+        row0.push_back(back_btn);
+        
+        keyboard->inlineKeyboard.push_back(row0);
 
         return keyboard;
 }

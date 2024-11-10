@@ -7,6 +7,8 @@ class help_mod
 {
 public:
         static TgBot::InlineKeyboardMarkup::Ptr __gen_help_keyboard(void);
+        static TgBot::InlineKeyboardMarkup::Ptr __gen_help_keyboard_back(void);
+        
 };
 
 #endif
