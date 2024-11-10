@@ -15,7 +15,7 @@ static inline TgBot::InlineKeyboardMarkup::Ptr __gen_keyboard(void)
 
         TgBot::InlineKeyboardButton::Ptr help_button(new TgBot::InlineKeyboardButton());
         help_button->text = "help";
-        help_button->callbackData = "cb_help";
+        help_button->callbackData = "help_cb 0";
         row0.push_back(help_button);
 
         keyboard->inlineKeyboard.push_back(row0);
