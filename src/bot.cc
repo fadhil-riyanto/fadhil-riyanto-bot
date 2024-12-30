@@ -57,6 +57,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_show_basic_config(void)
 {
         log_info("bot_username: %s", this->bot.getApi().getMe()
                                                 ->username.c_str());
+        log_info("mongodb_uri: %s", this->config->mongodb_conn_string);
         
 }
 
@@ -215,12 +216,14 @@ int main()
         ctx.reserved = 10;
         ctx.mongodb_ctx = mongoc_client_new(config.mongodb_conn_string);
 
-        /* test */
+        if (ctx.mongodb_ctx == NULL) {
+                printf("mongodb failed connect\n");
+        }
+
+        /* test, and use data from ctx */
         FadhilRiyanto::db::key_value key_value(ctx.mongodb_ctx, &config);
 
-        if (ctx.mongodb_ctx == NULL) {
-                perror("mongoc");
-        }
+        
 
         key_value.set("test", "test 2");
 
