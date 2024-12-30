@@ -34,7 +34,7 @@ public:
         handler(TgBot::Message::Ptr *message, TgBot::Bot *bot, struct ini_config *config,
                         volatile std::sig_atomic_t *signal_status, struct ctx *ctx);
         void handle_command_input(struct FadhilRiyanto::string_utils::command_parser_result *res);
-        void handle_text();
+        void handle_invalid_input(std::string reason);
 };
 
 class cb_handler

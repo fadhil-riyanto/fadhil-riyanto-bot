@@ -11,7 +11,12 @@
 #include <cstddef>
 #include <cstdio>
 #include <fmt/core.h>
+#include <fmt/format.h>
+#include <iostream>
+#include <iterator>
 #include <tgbot/tgbot.h>
+#include <tgbot/types/Chat.h>
+#include <tgbot/types/ReplyParameters.h>
 #include "../submodule/log.c-patched/src/log.h"
 #include "headers/string_helper.h"
 
@@ -57,7 +62,14 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::classify_input(void)
                 parser.command_parser_debug(this->config->enable_command_debug_log);
        
         } catch (FadhilRiyanto::error::not_command) {
-                this->handle_text();
+                
+                int issupergorup = (*this->msg)->chat->type == TgBot::Chat::Type::Supergroup ? 1 : 0;
+                
+                if (issupergorup == 0) {
+                        std::string result = fmt::format("\"{}\"its not a command", (*this->msg)->text);
+                        this->handle_invalid_input(result);
+                } 
+                
         }
 
         if (res.my_turn) {
@@ -66,13 +78,19 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::classify_input(void)
 }
 
 
-void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_text(void)
+void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_invalid_input(std::string reason)
 {
-        std::string res = fmt::format("your message is {}!\n", (*this->msg)->text);
+        TgBot::ReplyParameters::Ptr reply_param(new TgBot::ReplyParameters());
+        reply_param->messageId = (*this->msg)->messageId;
+        reply_param->chatId = (*this->msg)->chat->id;
+
+        std::cout << (*this->msg)->messageId << std::endl;
 
         this->bot->getApi().sendMessage(
                 (*this->msg)->chat->id,
-                res
+                reason,
+                NULL,
+                reply_param
         );
 }
 
