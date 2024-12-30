@@ -29,6 +29,8 @@ add_library(modules src/bot_module/main/start.cc
                         src/bot_module/main/help.cc
                         src/bot_module/main/help_mod.cc
                         src/bot_module/main/help_cb.cc
+
+                        src/bot_module/intel_intrinsics/intrin.cc
 )
 
 add_executable(fadhil_riyanto_bot src/bot.cc)

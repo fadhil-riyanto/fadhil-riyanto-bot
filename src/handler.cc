@@ -24,6 +24,7 @@
 // #include "bot_module/main/headers/_reg.h"
 #include "bot_module/main/headers/start.h"
 #include "bot_module/main/headers/help.h"
+#include "bot_module/intel_intrinsics/headers/intrin.h"
 /* module headers end */
 
 #include "bot_module/main/headers/help_cb.h"
@@ -109,6 +110,11 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::handle_command_input(
         }
         if (!res->command.compare("/help")) {
                 help_command cmd_ctx;
+                cmd_ctx.req(this->ctx, this->bot, this->msg, NULL, this->config);
+                cmd_ctx.run();
+        }
+        if (!res->command.compare("/intrin")) {
+                intrin_command cmd_ctx;
                 cmd_ctx.req(this->ctx, this->bot, this->msg, NULL, this->config);
                 cmd_ctx.run();
         }
