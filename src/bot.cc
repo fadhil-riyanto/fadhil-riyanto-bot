@@ -65,7 +65,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_message(TgBot::Message::Ptr *
 {
         bool ret;
 
-        log_info("%d : %s", (*msg)->chat->id, (*msg)->text.c_str());
+        log_info("%ld : %s", (*msg)->chat->id, (*msg)->text.c_str());
         
         ret = FadhilRiyanto::threading::thread_queue::send_queue(ring, (*msg));
         if (ret == false) {
