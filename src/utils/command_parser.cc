@@ -58,14 +58,16 @@ std::string command_parser::get_raw_command(void)
         /* find @ */
         npos = strret.find("@");
         
+        /* check whatever /abc or not */
         if (npos == std::string::npos) {
                 /* returned on no username detected */
                 this->res->my_turn = true;
                 this->res->command = strret;
                 return strret;
         } else {
-                /* returned on username */
+                /* returned on spesific username detected, let compare */
 
+                /* is match with config username */
                 if (!this->parseconf->bot_username.compare(strret.substr(npos, cur_off)) 
                         && cur_off != std::string::npos) {
 
