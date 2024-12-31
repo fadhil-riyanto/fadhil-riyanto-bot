@@ -17,4 +17,9 @@ struct ctx {
         long    reserved;
 };
 
+struct memory_struct {
+        char                    *memory;
+        size_t                  size;
+};
+
 #endif

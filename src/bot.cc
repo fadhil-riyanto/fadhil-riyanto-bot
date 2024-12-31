@@ -210,8 +210,7 @@ int main()
         }
 
         mongoc_init();
-
-        
+        curl_global_init(CURL_GLOBAL_ALL);
 
         log_set_quiet(!config.enable_all_log);
         ini_show_config(&config);
@@ -247,6 +246,7 @@ int main()
 
         mongoc_client_destroy(ctx.mongodb_ctx);
         mongoc_cleanup();
+        curl_global_cleanup();
 
         ini_free_mem(&config);
         return 0;
