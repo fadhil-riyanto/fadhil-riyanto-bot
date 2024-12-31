@@ -16,6 +16,7 @@ set(LIBFLAGS -lTgBot)
 add_library(threading src/utils/threading.cc)
 add_library(exception src/exception/not_command.cc)
 add_library(inih_parser src/inih_parser.cc submodule/inih/ini.c)
+add_library(pugixml submodule/pugixml/src/pugixml.cpp)
 add_library(log_c submodule/log.c-patched/src/log.cc)
 add_library(utils_command_parser src/utils/command_parser.cc)
 add_library(utils_string_helper src/utils/string_helper.cc)
@@ -44,7 +45,7 @@ include_directories(${LIBBSON_INCLUDE_DIRS})
 target_link_libraries(fadhil_riyanto_bot threading log_c 
                         threading handler exception  
                         utils_command_parser int_helper inih_parser 
-                        utils_string_helper db modules repo_key_value)
+                        utils_string_helper db modules repo_key_value pugixml)
 
 # target_link_libraries(fadhil_riyanto_bot  PkgConfig::PKG_FMT)
 target_link_libraries(fadhil_riyanto_bot ${LIBFLAGS} PkgConfig::CURL PkgConfig::LIBMONGOC PkgConfig::FMT)
