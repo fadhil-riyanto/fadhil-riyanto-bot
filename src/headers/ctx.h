@@ -11,9 +11,11 @@
 #define CTX_H
 
 #include <mongoc/mongoc.h>
+#include "command_parser.h"
 
 struct ctx {
         mongoc_client_t *mongodb_ctx;
+        struct FadhilRiyanto::string_utils::command_parser_result *parse_result;
         long    reserved;
 };
 

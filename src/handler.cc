@@ -13,7 +13,6 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <iostream>
-#include <iterator>
 #include <tgbot/tgbot.h>
 #include <tgbot/types/Chat.h>
 #include <tgbot/types/ReplyParameters.h>
@@ -74,6 +73,7 @@ void FadhilRiyanto::fadhil_riyanto_bot::handler::classify_input(void)
         }
 
         if (res.my_turn) {
+                this->ctx->parse_result = &this->res;
                 this->handle_command_input(&res);
         }
 }
