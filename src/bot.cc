@@ -138,12 +138,17 @@ void FadhilRiyanto::fadhil_riyanto_bot::bot_handle_queue_overflow(TgBot::Message
         replyParam->messageId = (*msg)->messageId;
         replyParam->chatId = (*msg)->chat->id;
 
-        this->bot.getApi().sendMessage(
-                (*msg)->chat->id, 
-                "server overloaded, try increasing 'queue_depth' at config.ini runtime section",
-                nullptr, 
-                replyParam
-        );
+        int is_group = (*msg)->chat->type == TgBot::Chat::Type::Supergroup ? 1 : 0;
+
+        if (!is_group) {
+                this->bot.getApi().sendMessage(
+                        (*msg)->chat->id, 
+                        "server overloaded, try increasing 'queue_depth' at config.ini runtime section",
+                        nullptr, 
+                        replyParam
+                );
+        }
+        
 }
 
 /* note: vg_err uninitialized value L109 */
