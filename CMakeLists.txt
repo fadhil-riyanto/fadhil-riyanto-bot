@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 project(fadhil_riyanto_bot VERSION 1.0)
 find_package(PkgConfig)
 
+
+add_compile_definitions("-DSERVER_ENV")
+
+
 pkg_check_modules(FMT REQUIRED IMPORTED_TARGET fmt)
 pkg_check_modules(CURL REQUIRED IMPORTED_TARGET libcurl)
 pkg_check_modules(LIBMONGOC REQUIRED IMPORTED_TARGET libmongoc-1.0)
