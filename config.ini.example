@@ -13,7 +13,12 @@ enable_on_create_thread_event = true
 enable_on_joined_thread_event = true
 enable_thread_bug_log = true
 enable_log_when_module_called = true
+enable_tg_input_logs = true
 
 [RUNTIME]
-queue_depth = 1
+queue_depth = 100
 queue_eventloop_sleep_ms = 100
+
+[DATABASE]
+mongodb_conn_string = mongodb://localhost:27017
+mongodb_db_target = fadhil_riyanto_bot_db
