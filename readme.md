@@ -9,6 +9,7 @@ personal assistant telegram bot
 - Zlib
 - cURL
 - [log.c](https://github.com/fadhil-riyanto/log.c-patched) (submodule)
+- [pugixml](https://github.com/zeux/pugixml) (submodule, checkout tags newest please)
 - [inih](https://github.com/benhoyt/inih) (submodule)
 - [googletest](https://github.com/google/googletest) (test)
 
@@ -69,9 +70,14 @@ cmake ..
 make -j4
 ```
 
+### 4. build server mode
+This will use api.telegram.org instead selfhosted server, you can skip step 3
+
+add `add_compile_definitions("-DSERVER_ENV")` to the CMakeLists.txt
+
 ## Licence
 license: [GPL-3.0](https://github.com/fadhil-riyanto/fadhil-riyanto-bot/blob/master/license)
 
 
 ## Maintainer
-Fadhil Riyanto
+Fadhil Riyanto <me@fadev.org>
