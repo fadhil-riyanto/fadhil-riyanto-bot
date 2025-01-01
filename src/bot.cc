@@ -40,7 +40,15 @@ void signal_handler(int signal)
 
 FadhilRiyanto::fadhil_riyanto_bot::fadhil_riyanto_bot(struct ini_config* config, 
         volatile std::sig_atomic_t *signal_status, struct ctx *ctx, TgBot::CurlHttpClient *api_http) 
-        : bot(config->bot_token, "http://127.0.0.1:8081"), api(config->bot_token, *api_http,  "http://127.0.0.1:8081")
+        : 
+        #ifdef SERVER_ENV
+        bot(config->bot_token, "https://api.telegram.org"),
+        api(config->bot_token, *api_http,  "https://api.telegram.org")
+        #else 
+        bot(config->bot_token, "http://127.0.0.1:8081"),
+        api(config->bot_token, *api_http,  "http://127.0.0.1:8081")
+        #endif
+        
 {
         // TgBot::CurlHttpClient curlhttpclient;
 

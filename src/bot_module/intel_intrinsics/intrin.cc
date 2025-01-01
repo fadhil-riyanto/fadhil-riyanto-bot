@@ -166,7 +166,15 @@ static void __hot peform_xml_fetch(struct memory_struct *chunk_data)
         chunk_data->size = 0;
 
         curl_handle = curl_easy_init();
+
+        #ifdef SERVER_ENV
+        
+        curl_easy_setopt(curl_handle, CURLOPT_URL, "https://www.intel.com/content/dam/develop/public/us/en/include/intrinsics-guide/data-3-6-9.xml");
+        #else 
+
+        /* make sure darkhttpd running */
         curl_easy_setopt(curl_handle, CURLOPT_URL, "http://0.0.0.0:8080/data-3-6-9.xml.xml");
+        #endif
         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, intel_xml_write_callback);
         curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void*)chunk_data);
 
