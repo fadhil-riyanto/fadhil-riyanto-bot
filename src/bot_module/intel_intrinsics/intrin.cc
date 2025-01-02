@@ -25,6 +25,11 @@ static void alloc_intel_intrinsics_data(struct intel_intrinsics_data *parsed_dat
 
 }
 
+/* return code
+-1 : error
+-2 : not found
+ 0 : success
+*/
 static __hot int start_parse(struct memory_struct *chunk_data, std::string instruction_search, 
         struct intel_intrinsics_data *parsed_data)
 {
@@ -74,11 +79,12 @@ static __hot int start_parse(struct memory_struct *chunk_data, std::string instr
 
                         parsed_data->category = strdup(intrin_arr.child("category").text().get());
                         
+                        return 0;
                         // parsed_data->parameter->type = strdup(intrin_arr.child("return").attribute("type").as_string());
                         // parsed_data->parameter->varname = strdup(intrin_arr.child("return").attribute("varname").as_string());
                 }
         }
-        return 0;
+        return -2;
 }
 
 static std::string funcparam_generator(struct intel_intrinsics_data *parsed_data)
@@ -100,39 +106,50 @@ static void intel_xml_intrin_memalloc()
         
 }
 
-static void intel_xml_intrin_cleanup(struct intel_intrinsics_data *intel_intrin)
+static void intel_xml_intrin_cleanup(struct intel_intrinsics_data *intel_intrin, int ret)
 {
-        free(intel_intrin->name);
-        free(intel_intrin->return_data->etype);
-        free(intel_intrin->return_data->type);
-        free(intel_intrin->return_data->varname);
+        if (ret == 0) {
+                free(intel_intrin->name);
+                free(intel_intrin->return_data->etype);
+                free(intel_intrin->return_data->type);
+                free(intel_intrin->return_data->varname);
 
-        if (intel_intrin->parameter_len == 1) {
-                free(intel_intrin->parameter);
-        } else { 
-                for(int i = 0; i < intel_intrin->parameter_len - 1; i++) {
-                        free(intel_intrin->parameter[i].etype);
-                        free(intel_intrin->parameter[i].type);
-                        free(intel_intrin->parameter[i].varname);
+                if (intel_intrin->parameter_len == 1) {
+                        free(intel_intrin->parameter);
+                } else { 
+                        for(int i = 0; i < intel_intrin->parameter_len - 1; i++) {
+                                free(intel_intrin->parameter[i].etype);
+                                free(intel_intrin->parameter[i].type);
+                                free(intel_intrin->parameter[i].varname);
+                        }
+                        free(intel_intrin->parameter);
                 }
+
+                free(intel_intrin->description);
+                free(intel_intrin->header);
+
+                free(intel_intrin->instruction->form);
+                free(intel_intrin->instruction->xed);
+                free(intel_intrin->instruction->name);
+
+                free(intel_intrin->instruction);
+
+                free(intel_intrin->operation);
+                free(intel_intrin->category);
+                
+                delete intel_intrin->cpuid;
+
+                free(intel_intrin);
+        } else if (ret == -2) {
+                free(intel_intrin->return_data);
                 free(intel_intrin->parameter);
+                
+                free(intel_intrin->instruction);
+                delete intel_intrin->cpuid;
+                free(intel_intrin);
+                
         }
-
-        free(intel_intrin->description);
-        free(intel_intrin->header);
-
-        free(intel_intrin->instruction->form);
-        free(intel_intrin->instruction->xed);
-        free(intel_intrin->instruction->name);
-
-        free(intel_intrin->instruction);
-
-        free(intel_intrin->operation);
-        free(intel_intrin->category);
         
-        delete intel_intrin->cpuid;
-
-        free(intel_intrin);
 }
 
 static size_t intel_xml_write_callback(void *contents, size_t size, size_t n, void *userp)
@@ -199,6 +216,18 @@ static inline __COLD void cleanup_all(struct memory_struct *chunk_data)
         free(chunk_data->memory);
 }
 
+void intrin_command::handle_on_error(std::string reason)
+{
+        TgBot::ReplyParameters::Ptr reply_param(new TgBot::ReplyParameters());
+        reply_param->chatId = (*this->msg)->chat->id;
+        reply_param->messageId = (*this->msg)->messageId;
+
+        this->bot->getApi().sendMessage(
+                (*this->msg)->chat->id, reason, 
+                NULL,
+                reply_param, nullptr, "HTML");
+}
+
 void intrin_command::req(struct ctx *ctx, TgBot::Bot *bot, TgBot::Message::Ptr *msg, TgBot::Api *api,
                 struct ini_config *config) 
 {
@@ -221,38 +250,46 @@ void intrin_command::run()
         intel_intrin->instruction = (struct _intel_instruction*)malloc(sizeof(struct _intel_instruction));
         intel_intrin->cpuid = new std::vector<std::string>({});
 
-        start_parse(&chunk_data, this->ctx->parse_result->value, intel_intrin);
+        int ret = start_parse(&chunk_data, this->ctx->parse_result->value, intel_intrin);
 
+        if (ret == -1) {
+                this->handle_on_error("curl unknown error");
+        } else if (ret == -2) {
+                this->handle_on_error("data not found");
+        } else if (ret == 0) {
+                TgBot::ReplyParameters::Ptr reply_param(new TgBot::ReplyParameters());
+                reply_param->chatId = (*this->msg)->chat->id;
+                reply_param->messageId = (*this->msg)->messageId;
 
-        TgBot::ReplyParameters::Ptr reply_param(new TgBot::ReplyParameters());
-        reply_param->chatId = (*this->msg)->chat->id;
-        reply_param->messageId = (*this->msg)->messageId;
+                std::string formatted = fmt::format("<b>Synopsis</b>\n"
+                        "<pre >\n{} {}({})</pre>\n"
+                        "<code>#include &lt;{}&gt;</code>\n"
+                        "instuction: <code>{} {}</code>\n"
+                        "CPUID: <code>{}</code>"
+                        "\n\n"
+                        "<b>Description</b>\n"
+                        "{}"
+                        "\n\n"
+                        "<b>Operation</b>\n"
+                        "<code>{}</code>",
+                        intel_intrin->return_data->type, intel_intrin->name, funcparam_generator(intel_intrin),
+                        intel_intrin->header, 
+                        FadhilRiyanto::string_utils::string_helper::string_lowercase(intel_intrin->instruction->name),
+                        intel_intrin->instruction->form,
+                        fmt::join(*intel_intrin->cpuid, " + "),
+                        intel_intrin->description, intel_intrin->operation
 
-        std::string formatted = fmt::format("<b>Synopsis</b>\n"
-                "<pre >\n{} {}({})</pre>\n"
-                "<code>#include &lt;{}&gt;</code>\n"
-                "instuction: <code>{} {}</code>\n"
-                "CPUID: <code>{}</code>"
-                "\n\n"
-                "<b>Description</b>\n"
-                "{}"
-                "\n\n"
-                "<b>Operation</b>\n"
-                "<code>{}</code>",
-                intel_intrin->return_data->type, intel_intrin->name, funcparam_generator(intel_intrin),
-                intel_intrin->header, 
-                FadhilRiyanto::string_utils::string_helper::string_lowercase(intel_intrin->instruction->name),
-                intel_intrin->instruction->form,
-                fmt::join(*intel_intrin->cpuid, " + "),
-                intel_intrin->description, intel_intrin->operation
+                );
 
-        );
+                this->bot->getApi().sendMessage(
+                        (*this->msg)->chat->id, formatted, 
+                        NULL,
+                        reply_param, nullptr, "HTML");
 
-        this->bot->getApi().sendMessage(
-                (*this->msg)->chat->id, formatted, 
-                NULL,
-                reply_param, nullptr, "HTML");
+                
+        }
 
         cleanup_all(&chunk_data);
-        intel_xml_intrin_cleanup(intel_intrin);
+        intel_xml_intrin_cleanup(intel_intrin, ret);
+        
 }

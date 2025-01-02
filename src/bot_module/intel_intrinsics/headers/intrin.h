@@ -13,6 +13,9 @@ public:
         TgBot::Api *api;
         struct ini_config *config;
 
+        void handle_on_error(std::string reason);
+
+        /* required */
         void req(struct ctx *ctx, TgBot::Bot *bot, TgBot::Message::Ptr *msg, TgBot::Api *api,
                 struct ini_config *config);
 
