@@ -52,6 +52,8 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build . --target install
 ```
 
+nb: use `-DCMAKE_BUILD_TYPE=debug` if you want debug binary mode
+
 start the service, you need api_id and api_hash from https://my.telegram.org/
 
 ```
